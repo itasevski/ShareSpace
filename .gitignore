@@ -1,0 +1,23 @@
+# dependencies
+sharespace-frontend/node_modules
+sharespace-frontend/.pnp
+sharespace-frontend/.pnp.js
+
+# testing
+sharespace-frontend/coverage
+
+# production
+sharespace-frontend/build
+
+# misc
+sharespace-frontend/.DS_Store
+sharespace-frontend/.env.local
+sharespace-frontend/.env.development.local
+sharespace-frontend/.env.test.local
+sharespace-frontend/.env.production.local
+
+sharespace-frontend/npm-debug.log*
+sharespace-frontend/yarn-debug.log*
+sharespace-frontend/yarn-error.log*
+
+sharespace-frontend/.env
