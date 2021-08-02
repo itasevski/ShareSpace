@@ -40,7 +40,6 @@ public abstract class User extends BaseEntity implements UserDetails {
     private boolean isCredentialsNonExpired = true;
     private boolean isEnabled = true;
 
-
     public User() {}
 
     public User(Role role, String username, String password, String firstName, String lastName, String phoneNumber, String email,
