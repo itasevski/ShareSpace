@@ -4,7 +4,7 @@ import Paper from "@material-ui/core/Paper";
 import LoginForm from "./LoginForm/LoginForm";
 import StyleOne from "../../Utilities/Styles/SecurityFormStyles/StyleOne";
 
-const Login = () => {
+const Login = (props) => {
     const classes = StyleOne();
 
     return (
@@ -14,7 +14,7 @@ const Login = () => {
                 <Paper className={classes.paper}>
                     <React.Fragment>
                         <React.Fragment>
-                            <LoginForm />
+                            <LoginForm onLogin={props.onLogin} />
                         </React.Fragment>
                     </React.Fragment>
                 </Paper>

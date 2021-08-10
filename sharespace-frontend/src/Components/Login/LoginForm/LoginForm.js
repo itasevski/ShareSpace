@@ -11,9 +11,35 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
+import {CheckCircle} from "@material-ui/icons";
+import {useHistory} from "react-router-dom";
 
-const LoginForm = () => {
+const LoginForm = (props) => {
     const classes = StyleTwo();
+
+    const history = useHistory();
+    const [state, setState] = React.useState({
+        username: "",
+        password: ""
+    });
+
+    const handleFieldChange = (event) => {
+        setState({
+            ...state,
+            [event.target.name]: event.target.value.trim()
+        });
+    }
+
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+        if(localStorage.getItem("successfulRegistration") !== null) localStorage.removeItem("successfulRegistration");
+
+        const username = state.username;
+        const password = state.password;
+
+        props.onLogin(username, password);
+        history.push("/");
+    }
 
     return (
         <React.Fragment>
@@ -26,7 +52,13 @@ const LoginForm = () => {
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <form className={classes.form} noValidate>
+                    {localStorage.getItem("successfulRegistration") === "true" &&
+                    <Typography variant="subtitle1" color="secondary" style={{ color: "#4BB543" }}>
+                        <CheckCircle style={{ color: "#4BB543" }} />&nbsp;
+                        You have been successfully registered.
+                    </Typography>
+                    }
+                    <form className={classes.form} onSubmit={handleFormSubmit}>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -37,6 +69,7 @@ const LoginForm = () => {
                             name="username"
                             autoComplete="username"
                             autoFocus
+                            onChange={handleFieldChange}
                         />
                         <TextField
                             variant="outlined"
@@ -48,6 +81,7 @@ const LoginForm = () => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onChange={handleFieldChange}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}

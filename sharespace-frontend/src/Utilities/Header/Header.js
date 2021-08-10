@@ -9,7 +9,8 @@ const Header = (props) => {
     const history = useHistory();
     const [state, setState] = React.useState({
         notificationsAnchorEl: null,
-        accountAnchorEl: null
+        accountAnchorEl: null,
+        userInfo: {}
     });
 
     const handleAccountIconClick = (event) => {
@@ -44,6 +45,14 @@ const Header = (props) => {
         return history.push("/home");
     }
 
+    const handleLogout = () => {
+        setState({
+            ...state,
+            accountAnchorEl: null
+        });
+        props.onLogout();
+    }
+
     return (
         <div>
             <AppBar id="headerAppBar" position="static">
@@ -61,7 +70,7 @@ const Header = (props) => {
                     <Typography style={{ paddingRight: "25px" }} variant="h6" noWrap>
                         <Link className="headerLink" to="/offers">Offers</Link>
                     </Typography>
-                    {props.isUserLoggedIn === true ? (
+                    {localStorage.getItem("userJwtToken") === null ? (
                         <Toolbar style={{ marginLeft: "auto" }}>
                             <Typography style={{ paddingRight: "25px" }} variant="h6" noWrap>
                                 <Link className="headerLink" to="/login">Login</Link>
@@ -74,6 +83,15 @@ const Header = (props) => {
                         <div id="headerIcons">
                             <IconButton
                                 aria-label="show 1 new notification"
+                                disabled
+                            >
+                                <Typography variant="h6" noWrap style={{ color: "gray" }}>
+                                    Hi, {props.userInfo.username}!
+                                </Typography>
+                            </IconButton>
+                            <IconButton
+                                aria-label="show 1 new notification"
+                                style={{ marginLeft: "10px" }}
                                 onClick={handleNotificationIconClick}
                             >
                                 <Badge badgeContent={1} color="secondary"
@@ -116,8 +134,8 @@ const Header = (props) => {
                                 <MenuItem onClick={handleAccountIconClose}>
                                     <Link className="headerLink" to="/profile">My profile</Link>
                                 </MenuItem>
-                                <MenuItem onClick={handleAccountIconClose}>
-                                    <Link className="headerLink" to="#">Logout</Link>
+                                <MenuItem onClick={handleLogout}>
+                                    <Link className="headerLink">Logout</Link>
                                 </MenuItem>
                             </Menu>
                         </div>

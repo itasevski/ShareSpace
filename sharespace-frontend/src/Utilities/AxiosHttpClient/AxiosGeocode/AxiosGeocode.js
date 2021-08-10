@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const AxiosHttpClient = axios.create({
+const AxiosGeocode = axios.create({
     baseURL: `https://maps.googleapis.com/maps/api/geocode`
 });
 
-export default AxiosHttpClient;
+export default AxiosGeocode;

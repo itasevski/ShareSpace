@@ -10,14 +10,56 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
+import {Error} from "@material-ui/icons";
+import {useHistory} from "react-router-dom";
 
-const RegisterForm = () => {
+const RegisterForm = (props) => {
     const classes = StyleTwo();
-    const [offerType, setOfferType] = React.useState("passenger");
 
-    const handleOfferTypeChange = (event) => {
-        setOfferType(event.target.value);
+    const history = useHistory();
+    const [state, setState] = React.useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+        userType: "passenger",
+
+        arePasswordsEqual: true,
+        isPasswordLengthValid: true,
+        isPasswordAlphanumeric: true
+    });
+
+    const handleFieldChange = (event) => {
+        setState({
+            ...state,
+            [event.target.name]: event.target.value.trim()
+        });
     };
+
+    // todo - handle backend exceptions (for unique attributes/fields, errors etc.)
+    // todo - create validation constraints for registration fields
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+
+        const firstName = state.firstName;
+        const lastName = state.lastName;
+        const email = state.email;
+        const username = state.username;
+        const password = state.password;
+        const confirmPassword = state.confirmPassword;
+        const userType = state.userType;
+
+        if(validatePassword(password, confirmPassword)) {
+            localStorage.setItem("successfulRegistration", "true");
+            props.onRegister(firstName, lastName, email, username, password, confirmPassword, userType);
+            history.push("/login");
+        }
+        else {
+            console.error("Registration failed.");
+        }
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -29,7 +71,25 @@ const RegisterForm = () => {
                 <Typography component="h1" variant="h5">
                     Sign up
                 </Typography>
-                <form className={classes.form} noValidate>
+                {state.arePasswordsEqual === false &&
+                <Typography variant="subtitle1" color="secondary">
+                    <Error color="secondary" />&nbsp;
+                    Passwords do not match
+                </Typography>
+                }
+                {state.isPasswordLengthValid === false &&
+                <Typography variant="subtitle1" color="secondary">
+                    <Error color="secondary" />&nbsp;
+                    Password must be at least 6 characters long
+                </Typography>
+                }
+                {state.isPasswordAlphanumeric === false &&
+                <Typography variant="subtitle1" color="secondary">
+                    <Error color="secondary" />&nbsp;
+                    Password must be alphanumeric
+                </Typography>
+                }
+                <form className={classes.form} onSubmit={handleFormSubmit} style={{ marginTop: "25px" }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -39,8 +99,9 @@ const RegisterForm = () => {
                                 fullWidth
                                 id="firstName"
                                 label="First Name"
-                                autoFocus
                                 autoComplete="fname"
+                                autoFocus
+                                onChange={handleFieldChange}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -52,10 +113,12 @@ const RegisterForm = () => {
                                 label="Last Name"
                                 name="lastName"
                                 autoComplete="lname"
+                                onChange={handleFieldChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
+                                type="email"
                                 variant="outlined"
                                 required
                                 fullWidth
@@ -63,6 +126,7 @@ const RegisterForm = () => {
                                 label="Email Address"
                                 name="email"
                                 autoComplete="email"
+                                onChange={handleFieldChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -74,6 +138,7 @@ const RegisterForm = () => {
                                 label="Username"
                                 name="username"
                                 autoComplete="username"
+                                onChange={handleFieldChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -86,6 +151,7 @@ const RegisterForm = () => {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
+                                onChange={handleFieldChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -98,14 +164,15 @@ const RegisterForm = () => {
                                 type="password"
                                 id="confirmPassword"
                                 autoComplete="current-password"
+                                onChange={handleFieldChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <FormLabel component="legend">Register as: </FormLabel>
-                            <RadioGroup aria-label="offerType"
-                                        name="offerType"
-                                        value={offerType}
-                                        onChange={handleOfferTypeChange}
+                            <RadioGroup aria-label="userType"
+                                        name="userType"
+                                        value={state.userType}
+                                        onChange={handleFieldChange}
                                         style={{ marginTop: "10px" }}>
                                 <FormControlLabel value="passenger" control={<Radio color="primary" />} label="Passenger" />
                                 <FormControlLabel value="driver" control={<Radio color="primary" />} label="Driver" />
@@ -132,6 +199,25 @@ const RegisterForm = () => {
             </div>
         </Container>
     );
+
+    function validatePassword(password, confirmPassword) {
+        var regex = /((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))/;
+
+        var arePasswordsEqual = password === confirmPassword;
+        var isPasswordLengthValid = password.length >= 6;
+        var isPasswordAlphanumeric;
+        password.match(regex) ? isPasswordAlphanumeric = true : isPasswordAlphanumeric = false;
+
+        setState({
+            ...state,
+            arePasswordsEqual: arePasswordsEqual,
+            isPasswordLengthValid: isPasswordLengthValid,
+            isPasswordAlphanumeric: isPasswordAlphanumeric
+        });
+
+        return (arePasswordsEqual === true && isPasswordLengthValid === true && isPasswordAlphanumeric === true);
+    }
+
 }
 
 export default RegisterForm;

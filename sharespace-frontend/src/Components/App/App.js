@@ -13,8 +13,9 @@ import CreateOffer from "../Offers/CreateOffer/CreateOffer";
 import Profile from "../Profile/Profile";
 import ProfileEdit from "../Profile/ProfileEdit/ProfileEdit";
 import PasswordChange from "../Profile/ProfileEdit/PasswordChange/PasswordChange";
-import ShareSpaceRepository from "../../Repository/ShareSpaceRepository";
-
+import GeocodeService from "../../Services/GeocodeService";
+import ShareSpaceService from "../../Services/ShareSpaceService";
+import jwt_decode from "jwt-decode";
 
 class App extends Component {
 
@@ -79,7 +80,7 @@ class App extends Component {
             ],
 
             // CURRENT USER VARIABLES
-            isUserLoggedIn: false,
+            userInfo: {},
             userMunicipality: "",
             userCity: ""
         }
@@ -89,13 +90,13 @@ class App extends Component {
         return (
             <main>
                 <Router>
-                    <Header isUserLoggedIn={this.state.isUserLoggedIn} />
+                    <Header userInfo={this.state.userInfo} onLogout={this.logout} />
 
                     <Route path={"/home"} exact render={() => <Home items={this.state.homeItems}/>} />
                     <Route path={"/about"} exact render={() => <About />} />
                     <Route path={"/contact"} exact render={() => <Contact />} />
-                    <Route path={"/login"} exact render={() => <Login />} />
-                    <Route path={"/register"} exact render={() => <Register />} />
+                    <Route path={"/login"} exact render={() => <Login onLogin={this.login} />} />
+                    <Route path={"/register"} exact render={() => <Register onRegister={this.registerNewUser} />} />
                     <Route path={"/offers"} exact render={() => <Offers userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />} />
                     <Route path={"/createOffer"} exact render={() => <CreateOffer />} />
                     <Route path={"/profile"} exact render={() => <Profile item={this.state.profileItems[0]} />} />
@@ -103,6 +104,7 @@ class App extends Component {
                     <Route path={"/profile/edit/changePassword"} exact render={() => <PasswordChange />} />
 
                     <Route path={"/"} exact render={() => <Redirect to={"/home"} />} />
+
                     <Footer />
                 </Router>
             </main>
@@ -110,14 +112,20 @@ class App extends Component {
     }
 
     componentDidMount() {
-      // this.loadGeolocationData();
+        if(localStorage.getItem("userJwtToken")) {
+            const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
+            const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
+            this.setState({
+                userInfo: JSON.parse(userInfo)
+            });
+        }
     }
 
     // REPOSITORY FETCH FUNCTIONS
-
+    //
     // loadGeolocationData = () => {
     //     navigator.geolocation.getCurrentPosition((position) => {
-    //         ShareSpaceRepository.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
+    //         GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
     //             .then((data) => {
     //                 this.setState({
     //                     geolocationData: data.data,
@@ -127,6 +135,32 @@ class App extends Component {
     //             });
     //     });
     // }
+
+    login = (username, password) => {
+        ShareSpaceService.login(username, password)
+            .then((data) => {
+                localStorage.setItem("userJwtToken", data.data);
+                const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
+                const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
+                this.setState({
+                    userInfo: JSON.parse(userInfo)
+                });
+            });
+    }
+
+    logout = () => {
+        localStorage.removeItem("userJwtToken");
+        this.setState({
+            userInfo: {}
+        });
+    }
+
+    registerNewUser = (firstName, lastName, email, username, password, confirmPassword, userType) => {
+        ShareSpaceService.register(firstName, lastName, email, username, password, confirmPassword, userType)
+            .then((data) => {
+                console.log(username + ": Successfully registered.");
+            });
+    }
 
 }
 
