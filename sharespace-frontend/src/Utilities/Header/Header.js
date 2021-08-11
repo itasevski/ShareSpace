@@ -67,9 +67,11 @@ const Header = (props) => {
                     <Typography style={{ paddingRight: "25px" }} variant="h6" noWrap>
                         <Link className="headerLink" to="/contact">Contact</Link>
                     </Typography>
+                    {localStorage.getItem("userJwtToken") !== null &&
                     <Typography style={{ paddingRight: "25px" }} variant="h6" noWrap>
                         <Link className="headerLink" to="/offers">Offers</Link>
                     </Typography>
+                    }
                     {localStorage.getItem("userJwtToken") === null ? (
                         <Toolbar style={{ marginLeft: "auto" }}>
                             <Typography style={{ paddingRight: "25px" }} variant="h6" noWrap>

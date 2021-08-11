@@ -92,18 +92,73 @@ class App extends Component {
                 <Router>
                     <Header userInfo={this.state.userInfo} onLogout={this.logout} />
 
-                    <Route path={"/home"} exact render={() => <Home items={this.state.homeItems}/>} />
+                    <Route path={"/home"} exact render={() => (
+                        localStorage.getItem("successfulRegistration") !== null ?
+                            (
+                                localStorage.removeItem("successfulRegistration"),
+                                <Home items={this.state.homeItems}/>
+                            ) :
+                            (
+                                <Home items={this.state.homeItems}/>
+                            )
+                    )} />
+
                     <Route path={"/about"} exact render={() => <About />} />
                     <Route path={"/contact"} exact render={() => <Contact />} />
                     <Route path={"/login"} exact render={() => <Login onLogin={this.login} />} />
                     <Route path={"/register"} exact render={() => <Register onRegister={this.registerNewUser} />} />
-                    <Route path={"/offers"} exact render={() => <Offers userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />} />
-                    <Route path={"/createOffer"} exact render={() => <CreateOffer />} />
-                    <Route path={"/profile"} exact render={() => <Profile item={this.state.profileItems[0]} />} />
-                    <Route path={"/profile/edit"} exact render={() => <ProfileEdit />} />
-                    <Route path={"/profile/edit/changePassword"} exact render={() => <PasswordChange />} />
 
-                    <Route path={"/"} exact render={() => <Redirect to={"/home"} />} />
+                    <Route path={"/offers"} exact render={() => (
+                        localStorage.getItem("userJwtToken") !== null ?
+                            (
+                                <Offers userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
+                            ) :
+                            (
+                                <Redirect to={"/login"} />
+                            )
+                    )}/>
+
+                    <Route path={"/createOffer"} exact render={() => (
+                        localStorage.getItem("userJwtToken") !== null ?
+                            (
+                                <CreateOffer />
+                            ) :
+                            (
+                                <Redirect to={"/login"} />
+                            )
+                    )} />
+
+                    <Route path={"/profile"} exact render={() => (
+                        localStorage.getItem("userJwtToken") !== null ?
+                            (
+                                <Profile item={this.state.profileItems[0]} />
+                            ) :
+                            (
+                                <Redirect to={"/login"} />
+                            )
+                    )} />
+
+                    <Route path={"/profile/edit"} exact render={() => (
+                        localStorage.getItem("userJwtToken") !== null ?
+                            (
+                                <ProfileEdit />
+                            ) :
+                            (
+                                <Redirect to={"/login"} />
+                            )
+                    )} />
+
+                    <Route path={"/profile/edit/changePassword"} exact render={() => (
+                        localStorage.getItem("userJwtToken") !== null ?
+                            (
+                                <PasswordChange />
+                            ) :
+                            (
+                                <Redirect to={"/login"} />
+                            )
+                    )} />
+
+                    <Route path={"/"} exact render={() => <Redirect to={"/home"} /> }/>
 
                     <Footer />
                 </Router>
@@ -112,6 +167,10 @@ class App extends Component {
     }
 
     componentDidMount() {
+        if(localStorage.getItem("successfulRegistration")) {
+            localStorage.removeItem("successfulRegistration");
+        }
+
         if(localStorage.getItem("userJwtToken")) {
             const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
             const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
