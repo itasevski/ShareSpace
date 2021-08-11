@@ -21,9 +21,15 @@ public class UserRestController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/find-id/{id}")
     public ResponseEntity<User> findById(@PathVariable String id) {
         User user = this.userService.findById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/find-username/{username}")
+    public ResponseEntity<User> findByUsername(@PathVariable String username) {
+        User user = this.userService.findByUsername(username);
         return ResponseEntity.ok(user);
     }
 

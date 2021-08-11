@@ -6,6 +6,7 @@ import mk.ukim.finki.sharespace.model.Passenger;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.dto.UserDto;
 import mk.ukim.finki.sharespace.model.enumeration.Role;
+import mk.ukim.finki.sharespace.model.enumeration.Type;
 import mk.ukim.finki.sharespace.model.exception.UserNotFoundException;
 import mk.ukim.finki.sharespace.repository.UserRepository;
 import mk.ukim.finki.sharespace.service.UserService;
@@ -30,12 +31,12 @@ public class UserServiceImplementation implements UserService {
     @Override
     public Optional<User> create(UserDto userDto) {
         User user = null;
-        if(userDto.getVehicleModel() != null) {
-            user = new Driver(userDto.getVehicleModel(), Role.ROLE_USER, userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(),
+        if(userDto.getType() == Type.DRIVER) {
+            user = new Driver(userDto.getVehicleModel(), Role.ROLE_USER, Type.DRIVER, userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(),
                     userDto.getPhoneNumber(), userDto.getEmail(), userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
         }
         else {
-            user = new Passenger(Role.ROLE_USER, userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(),
+            user = new Passenger(Role.ROLE_USER, Type.PASSENGER, userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(),
                     userDto.getPhoneNumber(), userDto.getEmail(), userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
         }
 
@@ -46,6 +47,12 @@ public class UserServiceImplementation implements UserService {
     public User findById(String id) {
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " doesn't exist."));
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " doesn't exist."));
     }
 
     @Override

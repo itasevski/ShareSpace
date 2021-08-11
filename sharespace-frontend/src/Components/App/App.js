@@ -81,8 +81,8 @@ class App extends Component {
 
             // CURRENT USER VARIABLES
             userInfo: {},
-            userMunicipality: "",
-            userCity: ""
+            userCity: "",
+            userMunicipality: ""
         }
     }
 
@@ -90,7 +90,7 @@ class App extends Component {
         return (
             <main>
                 <Router>
-                    <Header userInfo={this.state.userInfo} onLogout={this.logout} />
+                    <Header username={this.state.userInfo.username} onLogout={this.logout} />
 
                     <Route path={"/home"} exact render={() => (
                         localStorage.getItem("successfulRegistration") !== null ?
@@ -131,7 +131,7 @@ class App extends Component {
                     <Route path={"/profile"} exact render={() => (
                         localStorage.getItem("userJwtToken") !== null ?
                             (
-                                <Profile item={this.state.profileItems[0]} />
+                                <Profile item={this.state.profileItems[0]} userInfo={this.state.userInfo} userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
                             ) :
                             (
                                 <Redirect to={"/login"} />
@@ -167,21 +167,22 @@ class App extends Component {
     }
 
     componentDidMount() {
-        if(localStorage.getItem("successfulRegistration")) {
-            localStorage.removeItem("successfulRegistration");
-        }
-
         if(localStorage.getItem("userJwtToken")) {
             const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
             const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
-            this.setState({
-                userInfo: JSON.parse(userInfo)
-            });
+            ShareSpaceService.fetchCurrentUser(localStorage.getItem("userJwtToken"), JSON.parse(userInfo).username)
+                .then((data) => {
+                    this.setState({
+                        userInfo: data.data
+                    });
+                });
         }
+
+        // this.loadGeolocationData();
     }
 
     // REPOSITORY FETCH FUNCTIONS
-    //
+
     // loadGeolocationData = () => {
     //     navigator.geolocation.getCurrentPosition((position) => {
     //         GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
@@ -198,9 +199,12 @@ class App extends Component {
     login = () => {
         const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
         const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
-        this.setState({
-            userInfo: JSON.parse(userInfo)
-        });
+        ShareSpaceService.fetchCurrentUser(localStorage.getItem("userJwtToken"), JSON.parse(userInfo).username)
+            .then((data) => {
+                this.setState({
+                    userInfo: data.data
+                });
+            });
     }
 
     logout = () => {

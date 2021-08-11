@@ -3,6 +3,7 @@ package mk.ukim.finki.sharespace.model.abstraction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import mk.ukim.finki.sharespace.model.enumeration.Role;
+import mk.ukim.finki.sharespace.model.enumeration.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,6 +19,9 @@ public abstract class User extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     private String username;
     private String password;
@@ -42,9 +46,10 @@ public abstract class User extends BaseEntity implements UserDetails {
 
     public User() {}
 
-    public User(Role role, String username, String password, String firstName, String lastName, String phoneNumber, String email,
+    public User(Role role, Type type, String username, String password, String firstName, String lastName, String phoneNumber, String email,
                 String facebookLink, String twitterLink, String instagramLink, String bio) {
         this.role = role;
+        this.type = type;
         this.username = username;
         this.password = password;
         this.firstName = firstName;

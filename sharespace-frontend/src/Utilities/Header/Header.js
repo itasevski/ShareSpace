@@ -88,7 +88,7 @@ const Header = (props) => {
                                 disabled
                             >
                                 <Typography variant="h6" noWrap style={{ color: "gray" }}>
-                                    Hi, {props.userInfo.username}!
+                                    Hi, {props.username}!
                                 </Typography>
                             </IconButton>
                             <IconButton

@@ -6,6 +6,7 @@ import mk.ukim.finki.sharespace.model.Passenger;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.dto.auth.RegistrationDto;
 import mk.ukim.finki.sharespace.model.enumeration.Role;
+import mk.ukim.finki.sharespace.model.enumeration.Type;
 import mk.ukim.finki.sharespace.model.exception.EmailExistsException;
 import mk.ukim.finki.sharespace.model.exception.PasswordsDoNotMatchException;
 import mk.ukim.finki.sharespace.model.exception.UsernameExistsException;
@@ -37,14 +38,16 @@ public class AuthServiceImplementation implements AuthService {
 
         User user = null;
 
-        if(registrationDto.getUserType().equals("driver")) {
-            user = new Driver(null, Role.ROLE_USER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
-                    registrationDto.getFirstName(), registrationDto.getLastName(), null, registrationDto.getEmail(), null,
+        String phoneNumber = registrationDto.getPhoneNumber().length() <= 7 ? null : registrationDto.getPhoneNumber();
+
+        if(registrationDto.getType() == Type.DRIVER) {
+            user = new Driver(null, Role.ROLE_USER, Type.DRIVER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
+                    registrationDto.getFirstName(), registrationDto.getLastName(), phoneNumber, registrationDto.getEmail(), null,
                     null, null, null);
         }
         else {
-            user = new Passenger(Role.ROLE_USER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
-                    registrationDto.getFirstName(), registrationDto.getLastName(), null, registrationDto.getEmail(),
+            user = new Passenger(Role.ROLE_USER, Type.PASSENGER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
+                    registrationDto.getFirstName(), registrationDto.getLastName(), phoneNumber, registrationDto.getEmail(),
                     null, null, null, null);
         }
 

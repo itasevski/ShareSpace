@@ -13,8 +13,9 @@ import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
 import {Error} from "@material-ui/icons";
 import {useHistory} from "react-router-dom";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
+import MuiPhoneNumber from "material-ui-phone-number";
 
-const RegisterForm = (props) => {
+const RegisterForm = () => {
     const classes = StyleTwo();
 
     const history = useHistory();
@@ -22,10 +23,11 @@ const RegisterForm = (props) => {
         firstName: "",
         lastName: "",
         email: "",
+        phoneNumber: "",
         username: "",
         password: "",
         confirmPassword: "",
-        userType: "passenger",
+        type: "PASSENGER",
 
         arePasswordsEqual: true,
         isPasswordLengthValid: true,
@@ -42,6 +44,13 @@ const RegisterForm = (props) => {
         });
     };
 
+    const handlePhoneFieldChange = (value) => {
+        setState({
+            ...state,
+            phoneNumber: value
+        });
+    }
+
     // todo - handle backend exceptions (for unique attributes/fields, errors etc.)
     const handleFormSubmit = (event) => {
         event.preventDefault();
@@ -49,21 +58,22 @@ const RegisterForm = (props) => {
         const firstName = state.firstName;
         const lastName = state.lastName;
         const email = state.email;
+        const phoneNumber = state.phoneNumber;
         const username = state.username;
         const password = state.password;
         const confirmPassword = state.confirmPassword;
-        const userType = state.userType;
+        const type = state.type;
 
         if(validatePassword(password, confirmPassword)) {
-            register(firstName, lastName, email, username, password, confirmPassword, userType);
+            register(firstName, lastName, email, phoneNumber, username, password, confirmPassword, type);
         }
         else {
             console.error("Registration failed.");
         }
     }
 
-    const register = (firstName, lastName, email, username, password, confirmPassword, userType) => {
-        ShareSpaceService.register(firstName, lastName, email, username, password, confirmPassword, userType)
+    const register = (firstName, lastName, email, phoneNumber, username, password, confirmPassword, type) => {
+        ShareSpaceService.register(firstName, lastName, email, phoneNumber, username, password, confirmPassword, type)
             .then(
                 (data) => {
                     localStorage.setItem("successfulRegistration", "true");
@@ -154,6 +164,19 @@ const RegisterForm = (props) => {
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <MuiPhoneNumber
+                                variant="outlined"
+                                fullWidth
+                                id="phoneNumber"
+                                label="Phone number"
+                                name="phoneNumber"
+                                autoComplete="phoneNumber"
+                                defaultCountry={"mk"}
+                                value={state.phoneNumber}
+                                onChange={handlePhoneFieldChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
                                 required
@@ -193,13 +216,13 @@ const RegisterForm = (props) => {
                         </Grid>
                         <Grid item xs={12}>
                             <FormLabel component="legend">Register as: </FormLabel>
-                            <RadioGroup aria-label="userType"
-                                        name="userType"
-                                        value={state.userType}
+                            <RadioGroup aria-label="type"
+                                        name="type"
+                                        value={state.type}
                                         onChange={handleFieldChange}
                                         style={{ marginTop: "10px" }}>
-                                <FormControlLabel value="passenger" control={<Radio color="primary" />} label="Passenger" />
-                                <FormControlLabel value="driver" control={<Radio color="primary" />} label="Driver" />
+                                <FormControlLabel value="PASSENGER" control={<Radio color="primary" />} label="Passenger" />
+                                <FormControlLabel value="DRIVER" control={<Radio color="primary" />} label="Driver" />
                             </RadioGroup>
                         </Grid>
                     </Grid>

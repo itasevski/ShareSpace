@@ -1,10 +1,12 @@
 package mk.ukim.finki.sharespace.model.dto;
 
 import lombok.Data;
+import mk.ukim.finki.sharespace.model.enumeration.Type;
 
 @Data
 public class UserDto {
 
+    private Type type;
     private String username;
     private String password;
     private String firstName;
