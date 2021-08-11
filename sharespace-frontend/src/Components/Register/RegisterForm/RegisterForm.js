@@ -12,6 +12,7 @@ import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
 import {Error} from "@material-ui/icons";
 import {useHistory} from "react-router-dom";
+import ShareSpaceService from "../../../Services/ShareSpaceService";
 
 const RegisterForm = (props) => {
     const classes = StyleTwo();
@@ -28,7 +29,10 @@ const RegisterForm = (props) => {
 
         arePasswordsEqual: true,
         isPasswordLengthValid: true,
-        isPasswordAlphanumeric: true
+        isPasswordAlphanumeric: true,
+
+        error: false,
+        errorMessage: {}
     });
 
     const handleFieldChange = (event) => {
@@ -39,7 +43,6 @@ const RegisterForm = (props) => {
     };
 
     // todo - handle backend exceptions (for unique attributes/fields, errors etc.)
-    // todo - create validation constraints for registration fields
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
@@ -52,13 +55,28 @@ const RegisterForm = (props) => {
         const userType = state.userType;
 
         if(validatePassword(password, confirmPassword)) {
-            localStorage.setItem("successfulRegistration", "true");
-            props.onRegister(firstName, lastName, email, username, password, confirmPassword, userType);
-            history.push("/login");
+            register(firstName, lastName, email, username, password, confirmPassword, userType);
         }
         else {
             console.error("Registration failed.");
         }
+    }
+
+    const register = (firstName, lastName, email, username, password, confirmPassword, userType) => {
+        ShareSpaceService.register(firstName, lastName, email, username, password, confirmPassword, userType)
+            .then(
+                (data) => {
+                    localStorage.setItem("successfulRegistration", "true");
+                    console.log(username + ": Successfully registered.");
+                    history.push("/login");
+                },
+                (err) => {
+                    setState({
+                        ...state,
+                        error: true,
+                        errorMessage: err.response.status + ": " + err.response.data.errorMessage
+                    });
+                });
     }
 
     return (
@@ -87,6 +105,12 @@ const RegisterForm = (props) => {
                 <Typography variant="subtitle1" color="secondary">
                     <Error color="secondary" />&nbsp;
                     Password must be alphanumeric
+                </Typography>
+                }
+                {state.error === true &&
+                <Typography variant="subtitle1" color="secondary">
+                    <Error color="secondary" />&nbsp;
+                    {state.errorMessage}
                 </Typography>
                 }
                 <form className={classes.form} onSubmit={handleFormSubmit} style={{ marginTop: "25px" }}>

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.dto.auth.RegistrationDto;
 import mk.ukim.finki.sharespace.service.AuthService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

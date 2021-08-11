@@ -1,6 +1,8 @@
 package mk.ukim.finki.sharespace.model.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import mk.ukim.finki.sharespace.model.exception.parent.ResourceNotFoundException;
+
+public class UserNotFoundException extends ResourceNotFoundException {
 
     public UserNotFoundException(String message) {
         super(message);

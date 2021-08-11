@@ -11,8 +11,9 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
-import {CheckCircle} from "@material-ui/icons";
+import {CheckCircle, Error} from "@material-ui/icons";
 import {useHistory} from "react-router-dom";
+import ShareSpaceService from "../../../Services/ShareSpaceService";
 
 const LoginForm = (props) => {
     const classes = StyleTwo();
@@ -20,7 +21,9 @@ const LoginForm = (props) => {
     const history = useHistory();
     const [state, setState] = React.useState({
         username: "",
-        password: ""
+        password: "",
+        error: false,
+        errorMessage: {}
     });
 
     const handleFieldChange = (event) => {
@@ -37,8 +40,24 @@ const LoginForm = (props) => {
         const username = state.username;
         const password = state.password;
 
-        props.onLogin(username, password);
-        history.push("/");
+        login(username, password);
+    }
+
+    const login = (username, password) => {
+        ShareSpaceService.login(username, password)
+            .then(
+                (data) => {
+                    localStorage.setItem("userJwtToken", data.data);
+                    props.onLogin();
+                    history.push("/");
+            },
+                (err) => {
+                    setState({
+                        ...state,
+                        error: true,
+                        errorMessage: "Invalid authentication attempt for user " + username
+                    });
+                });
     }
 
     return (
@@ -53,9 +72,15 @@ const LoginForm = (props) => {
                         Sign in
                     </Typography>
                     {localStorage.getItem("successfulRegistration") === "true" &&
-                    <Typography variant="subtitle1" color="secondary" style={{ color: "#4BB543" }}>
+                    <Typography variant="subtitle1" style={{ color: "#4BB543" }}>
                         <CheckCircle style={{ color: "#4BB543" }} />&nbsp;
                         You have been successfully registered.
+                    </Typography>
+                    }
+                    {state.error === true &&
+                    <Typography variant="subtitle1" color="secondary">
+                        <Error color="secondary" />&nbsp;
+                        {state.errorMessage}
                     </Typography>
                     }
                     <form className={classes.form} onSubmit={handleFormSubmit}>

@@ -1,6 +1,8 @@
 package mk.ukim.finki.sharespace.model.exception;
 
-public class RendezvousPointNotFoundException extends RuntimeException {
+import mk.ukim.finki.sharespace.model.exception.parent.ResourceNotFoundException;
+
+public class RendezvousPointNotFoundException extends ResourceNotFoundException {
 
     public RendezvousPointNotFoundException(String message) {
         super(message);

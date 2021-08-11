@@ -4,7 +4,7 @@ import Paper from "@material-ui/core/Paper";
 import RegisterForm from "./RegisterForm/RegisterForm";
 import StyleOne from "../../Utilities/Styles/SecurityFormStyles/StyleOne";
 
-const Register = (props) => {
+const Register = () => {
     const classes = StyleOne();
 
     return (
@@ -14,7 +14,7 @@ const Register = (props) => {
                 <Paper className={classes.paper}>
                     <React.Fragment>
                         <React.Fragment>
-                            <RegisterForm onRegister={props.onRegister} />
+                            <RegisterForm />
                         </React.Fragment>
                     </React.Fragment>
                 </Paper>

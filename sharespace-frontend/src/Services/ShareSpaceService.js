@@ -17,14 +17,14 @@ const ShareSpaceService = {
             "confirmPassword": confirmPassword,
             "userType": userType
         });
+    },
+    fetchUser: (token, uuid) => {
+        return AxiosShareSpace.get(`/api/users/find/${uuid}`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
     }
-    // fetchUser: (token) => {
-    //     return AxiosShareSpace.get("/api/users/find/34da315c-3051-48eb-97b8-6c14a919d0db", {
-    //         headers: {
-    //             Authorization: 'Bearer ' + token
-    //         }
-    //     });
-    // }
 }
 
 export default ShareSpaceService;

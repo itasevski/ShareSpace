@@ -106,7 +106,7 @@ class App extends Component {
                     <Route path={"/about"} exact render={() => <About />} />
                     <Route path={"/contact"} exact render={() => <Contact />} />
                     <Route path={"/login"} exact render={() => <Login onLogin={this.login} />} />
-                    <Route path={"/register"} exact render={() => <Register onRegister={this.registerNewUser} />} />
+                    <Route path={"/register"} exact render={() => <Register />} />
 
                     <Route path={"/offers"} exact render={() => (
                         localStorage.getItem("userJwtToken") !== null ?
@@ -195,16 +195,12 @@ class App extends Component {
     //     });
     // }
 
-    login = (username, password) => {
-        ShareSpaceService.login(username, password)
-            .then((data) => {
-                localStorage.setItem("userJwtToken", data.data);
-                const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
-                const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
-                this.setState({
-                    userInfo: JSON.parse(userInfo)
-                });
-            });
+    login = () => {
+        const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
+        const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
+        this.setState({
+            userInfo: JSON.parse(userInfo)
+        });
     }
 
     logout = () => {
@@ -212,13 +208,6 @@ class App extends Component {
         this.setState({
             userInfo: {}
         });
-    }
-
-    registerNewUser = (firstName, lastName, email, username, password, confirmPassword, userType) => {
-        ShareSpaceService.register(firstName, lastName, email, username, password, confirmPassword, userType)
-            .then((data) => {
-                console.log(username + ": Successfully registered.");
-            });
     }
 
 }

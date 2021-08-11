@@ -27,12 +27,11 @@ public class JwtWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    // TODO: 02/08/2021 - Configure all antmatchers based on REST endpoints.
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/auth/register").permitAll()
+                .antMatchers("/login", "/api/auth/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new AuthenticationFilter(authenticationManager(), this.userService, this.passwordEncoder))
