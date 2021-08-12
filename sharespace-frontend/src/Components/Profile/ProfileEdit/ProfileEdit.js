@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {VerifiedUserRounded} from "@material-ui/icons";
 import ProfileEditForm from "../ProfileEditForm/ProfileEditForm";
@@ -42,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const ProfileEdit = () => {
+const ProfileEdit = (props) => {
     const classes = useStyles();
 
     return (
@@ -62,10 +61,10 @@ const ProfileEdit = () => {
                                         <VerifiedUserRounded style={{ fontSize: "150px" }} />
                                     </Grid>
                                     <Grid container justifyContent="center">
-                                        <Typography variant="h4">Ivo Tasevski</Typography>
+                                        <Typography variant="h4">{props.userInfo.firstName} {props.userInfo.lastName}</Typography>
                                     </Grid>
                                     <Grid container justifyContent="center">
-                                        <Typography variant="h6">Driver</Typography>
+                                        <Typography variant="h6">{props.userInfo.type}</Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={5}>
@@ -77,23 +76,7 @@ const ProfileEdit = () => {
                     </Typography>
                     <React.Fragment>
                         <React.Fragment>
-                            <ProfileEditForm />
-                            <div className={classes.buttons}>
-                                <Button
-                                    variant="contained"
-                                    className={classes.button}
-                                    href="/profile"
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.button}
-                                >
-                                    Save
-                                </Button>
-                            </div>
+                            <ProfileEditForm userInfo={props.userInfo} onProfileEdit={props.onProfileEdit} />
                         </React.Fragment>
                     </React.Fragment>
                 </Paper>

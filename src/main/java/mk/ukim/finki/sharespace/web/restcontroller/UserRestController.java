@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserRestController {
 
     private final UserService userService;
@@ -33,7 +34,7 @@ public class UserRestController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/update/{id}")
+    @PostMapping("/update/{id}")
     public ResponseEntity<User> update(@PathVariable String id, @RequestBody UserDto userDto) {
         return this.userService.update(id, userDto)
                 .map(user -> ResponseEntity.ok().body(user))

@@ -11,6 +11,7 @@ import "./Offers.css";
 import {ArrowDownward, ArrowUpward, Clear, VerifiedUserRounded} from "@material-ui/icons";
 import Box from "@material-ui/core/Box";
 import FiltersCustomDialog from "../../Utilities/FiltersCustomDialog/FiltersCustomDialog";
+import {Link} from "react-router-dom";
 
 class Offers extends Component {
     constructor(props) {
@@ -57,7 +58,11 @@ class Offers extends Component {
                             <Typography variant="subtitle1">Your location: {this.props.userCity}, {this.props.userMunicipality}</Typography>
                         </Grid>
                         <Grid container justifyContent="center">
-                            <Button variant="contained" color="primary" href="/createOffer">Create offer</Button>
+                            <Link to="/createOffer" style={{ textDecoration: "none", color: "white" }}>
+                                <Button color="primary" variant="contained">
+                                    Create offer
+                                </Button>
+                            </Link>
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>
@@ -153,12 +158,12 @@ class Offers extends Component {
                                     </Select>
                                     <Box ml={1}>
                                         <Tooltip title="Ascending">
-                                            <IconButton href="#">
+                                            <IconButton>
                                                 <ArrowUpward style={{ fontSize: "18px" }} />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Descending">
-                                            <IconButton href="#">
+                                            <IconButton>
                                                 <ArrowDownward style={{ fontSize: "18px" }} />
                                             </IconButton>
                                         </Tooltip>
@@ -170,7 +175,7 @@ class Offers extends Component {
                     <Grid item xs={8}>
                         <Grid container justifyContent="flex-end">
                             <TextField placeholder="Enter keywords..." style={{ marginRight: "15px" }} />
-                            <Button variant="outlined" color="primary" href="#">Search</Button>
+                            <Button variant="outlined" color="primary">Search</Button>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} style={{ marginTop: "30px" }}>
@@ -230,7 +235,7 @@ class Offers extends Component {
                                                 <Typography variant="subtitle1">- Aleksandar Antov</Typography>
                                             </TableCell>
                                             <TableCell align="right">
-                                                <Button variant="contained" style={{ backgroundColor: "green", color: "white" }} href="#">JOIN</Button>
+                                                <Button variant="contained" style={{ backgroundColor: "green", color: "white" }}>JOIN</Button>
                                                 <Typography variant="subtitle2">Expires in: 20h</Typography>
                                             </TableCell>
                                         </TableRow>

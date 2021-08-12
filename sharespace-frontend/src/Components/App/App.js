@@ -131,7 +131,10 @@ class App extends Component {
                     <Route path={"/profile"} exact render={() => (
                         localStorage.getItem("userJwtToken") !== null ?
                             (
-                                <Profile item={this.state.profileItems[0]} userInfo={this.state.userInfo} userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
+                                <Profile item={this.state.profileItems[0]}
+                                         userInfo={this.state.userInfo}
+                                         userCity={this.state.userCity}
+                                         userMunicipality={this.state.userMunicipality} />
                             ) :
                             (
                                 <Redirect to={"/login"} />
@@ -141,7 +144,7 @@ class App extends Component {
                     <Route path={"/profile/edit"} exact render={() => (
                         localStorage.getItem("userJwtToken") !== null ?
                             (
-                                <ProfileEdit />
+                                <ProfileEdit userInfo={this.state.userInfo} onProfileEdit={this.profileEdit} />
                             ) :
                             (
                                 <Redirect to={"/login"} />
@@ -171,11 +174,18 @@ class App extends Component {
             const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));
             const userInfo = JSON.parse(JSON.stringify(decodedJwtToken.sub));
             ShareSpaceService.fetchCurrentUser(localStorage.getItem("userJwtToken"), JSON.parse(userInfo).username)
-                .then((data) => {
-                    this.setState({
-                        userInfo: data.data
+                .then(
+                    (data) => {
+                        this.setState({
+                            userInfo: data.data
+                        });
+                },
+                    (err) => {
+                        localStorage.removeItem("userJwtToken");
+                        this.setState({
+                            userInfo: {}
+                        });
                     });
-                });
         }
 
         // this.loadGeolocationData();
@@ -212,6 +222,18 @@ class App extends Component {
         this.setState({
             userInfo: {}
         });
+    }
+
+    profileEdit = (firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
+        ShareSpaceService.updateCurrentUser(
+            localStorage.getItem("userJwtToken"),
+            this.state.userInfo.id,
+            firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel)
+                .then((data) => {
+                    this.setState({
+                        userInfo: data.data
+                    });
+                });
     }
 
 }

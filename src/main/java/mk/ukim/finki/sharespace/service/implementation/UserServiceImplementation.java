@@ -32,12 +32,12 @@ public class UserServiceImplementation implements UserService {
     public Optional<User> create(UserDto userDto) {
         User user = null;
         if(userDto.getType() == Type.DRIVER) {
-            user = new Driver(userDto.getVehicleModel(), Role.ROLE_USER, Type.DRIVER, userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(),
-                    userDto.getPhoneNumber(), userDto.getEmail(), userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
+            user = new Driver(userDto.getVehicleModel(), Role.ROLE_USER, Type.DRIVER, "testusername", "testpass", userDto.getFirstName(), userDto.getLastName(),
+                    userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
         }
         else {
-            user = new Passenger(Role.ROLE_USER, Type.PASSENGER, userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(),
-                    userDto.getPhoneNumber(), userDto.getEmail(), userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
+            user = new Passenger(Role.ROLE_USER, Type.PASSENGER, "testusername", "testpass", userDto.getFirstName(), userDto.getLastName(),
+                    userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
         }
 
         return Optional.of(this.userRepository.save(user));
@@ -59,16 +59,16 @@ public class UserServiceImplementation implements UserService {
     public Optional<User> update(String id, UserDto userDto) {
         User user = findById(id);
 
-        if (user instanceof Driver) {
+        if (userDto.getType() == Type.DRIVER) {
             ((Driver) user).setVehicleModel(userDto.getVehicleModel());
         }
         user.setFirstName(userDto.getFirstName());
         user.setLastName(user.getLastName());
+        user.setBio(userDto.getBio());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setFacebookLink(userDto.getFacebookLink());
         user.setTwitterLink(userDto.getTwitterLink());
         user.setInstagramLink(userDto.getInstagramLink());
-        user.setBio(userDto.getBio());
 
         return Optional.of(this.userRepository.save(user));
     }

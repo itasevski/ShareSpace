@@ -22,7 +22,7 @@ const PasswordChangeForm = () => {
                     <Typography component="h1" variant="h5">
                         Change password
                     </Typography>
-                    <form className={classes.form} noValidate>
+                    <form>
                         <TextField
                             variant="outlined"
                             margin="normal"

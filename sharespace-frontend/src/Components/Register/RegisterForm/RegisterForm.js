@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -7,11 +7,10 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
 import {Error} from "@material-ui/icons";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
 import MuiPhoneNumber from "material-ui-phone-number";
 
@@ -29,18 +28,28 @@ const RegisterForm = () => {
         confirmPassword: "",
         type: "PASSENGER",
 
+        countryCode: "",
+
         arePasswordsEqual: true,
         isPasswordLengthValid: true,
         isPasswordAlphanumeric: true,
+        isPhoneNumberValid: true,
 
         error: false,
         errorMessage: {}
     });
 
+    useEffect(() => {
+        setState({
+            ...state,
+            countryCode: document.getElementById("phoneNumber").value
+        });
+    }, []);
+
     const handleFieldChange = (event) => {
         setState({
             ...state,
-            [event.target.name]: event.target.value.trim()
+            [event.target.name]: event.target.value
         });
     };
 
@@ -51,14 +60,21 @@ const RegisterForm = () => {
         });
     }
 
-    // todo - handle backend exceptions (for unique attributes/fields, errors etc.)
     const handleFormSubmit = (event) => {
         event.preventDefault();
+
+        const phoneNumber =
+            (state.phoneNumber === "+" || state.phoneNumber === state.countryCode || state.phoneNumber === null || state.phoneNumber === "") === true ?
+                null : state.phoneNumber;
+
+        if(!validatePhoneNumber(phoneNumber)) {
+            console.error("Invalid phone number");
+            return;
+        }
 
         const firstName = state.firstName;
         const lastName = state.lastName;
         const email = state.email;
-        const phoneNumber = state.phoneNumber;
         const username = state.username;
         const password = state.password;
         const confirmPassword = state.confirmPassword;
@@ -115,6 +131,12 @@ const RegisterForm = () => {
                 <Typography variant="subtitle1" color="secondary">
                     <Error color="secondary" />&nbsp;
                     Password must be alphanumeric
+                </Typography>
+                }
+                {state.isPhoneNumberValid === false &&
+                <Typography variant="subtitle1" color="secondary">
+                    <Error color="secondary" />&nbsp;
+                    Invalid phone number
                 </Typography>
                 }
                 {state.error === true &&
@@ -237,7 +259,7 @@ const RegisterForm = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="/login" variant="body2">
+                            <Link to="/login" variant="body2" style={{ color: "#3f51b5" }}>
                                 Already have an account? Sign in
                             </Link>
                         </Grid>
@@ -259,10 +281,26 @@ const RegisterForm = () => {
             ...state,
             arePasswordsEqual: arePasswordsEqual,
             isPasswordLengthValid: isPasswordLengthValid,
-            isPasswordAlphanumeric: isPasswordAlphanumeric
+            isPasswordAlphanumeric: isPasswordAlphanumeric,
+            isPhoneNumberValid: true
         });
 
         return (arePasswordsEqual === true && isPasswordLengthValid === true && isPasswordAlphanumeric === true);
+    }
+
+    function validatePhoneNumber(phoneNumber) {
+        var isPhoneNumberValid = true;
+
+        if(phoneNumber !== null) {
+            isPhoneNumberValid = (phoneNumber.length >= 8 && phoneNumber.length <= 16);
+        }
+
+        setState({
+            ...state,
+            isPhoneNumberValid: isPhoneNumberValid
+        });
+
+        return isPhoneNumberValid;
     }
 
 }

@@ -9,8 +9,7 @@ const Header = (props) => {
     const history = useHistory();
     const [state, setState] = React.useState({
         notificationsAnchorEl: null,
-        accountAnchorEl: null,
-        userInfo: {}
+        accountAnchorEl: null
     });
 
     const handleAccountIconClick = (event) => {
@@ -116,15 +115,11 @@ const Header = (props) => {
                                 open={Boolean(state.notificationsAnchorEl)}
                                 onClose={handleNotificationIconClose}
                             >
-                                <MenuItem onClick={handleNotificationIconClose}>
-                                    <Link className="headerLink" to="#">Notification 1</Link>
-                                </MenuItem>
-                                <MenuItem onClick={handleNotificationIconClose}>
-                                    <Link className="headerLink" to="#">Notification 2</Link>
-                                </MenuItem>
-                                <MenuItem onClick={handleNotificationIconClose}>
-                                    <Link className="headerLink" to="#">Notification N</Link>
-                                </MenuItem>
+                                <Link className="headerLink" to="#">
+                                    <MenuItem onClick={handleNotificationIconClose}>
+                                        Notification 1
+                                    </MenuItem>
+                                </Link>
                             </Menu>
                             <Menu
                                 id="simple-menu"
@@ -133,12 +128,16 @@ const Header = (props) => {
                                 open={Boolean(state.accountAnchorEl)}
                                 onClose={handleAccountIconClose}
                             >
-                                <MenuItem onClick={handleAccountIconClose}>
-                                    <Link className="headerLink" to="/profile">My profile</Link>
-                                </MenuItem>
-                                <MenuItem onClick={handleLogout}>
-                                    <Link className="headerLink">Logout</Link>
-                                </MenuItem>
+                                <Link className="headerLink" to="/profile">
+                                    <MenuItem onClick={handleAccountIconClose}>
+                                        My profile
+                                    </MenuItem>
+                                </Link>
+                                <Link className="headerLink">
+                                    <MenuItem onClick={handleLogout}>
+                                        Logout
+                                    </MenuItem>
+                                </Link>
                             </Menu>
                         </div>
                     )}

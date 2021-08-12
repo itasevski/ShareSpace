@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {LocalOfferTwoTone} from "@material-ui/icons";
 import CreateOfferForm from "../CreateOfferForm/CreateOfferForm";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     typography: {
@@ -36,8 +37,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'flex-end',
     },
     button: {
-        marginTop: theme.spacing(3),
-        marginLeft: theme.spacing(1),
+        marginLeft: theme.spacing(2)
     }
 }));
 
@@ -57,13 +57,15 @@ const CreateOffer = () => {
                             <React.Fragment>
                                 <CreateOfferForm />
                                 <div className={classes.buttons}>
-                                    <Button
-                                        variant="contained"
-                                        className={classes.button}
-                                        href="/offers"
-                                    >
-                                        Cancel
-                                    </Button>
+                                    <Link to="/offers" style={{ textDecoration: "none", color: "#3f51b5" }}>
+                                        <Button
+                                            type="button"
+                                            color="primary"
+                                            variant="outlined"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </Link>
                                     <Button
                                         variant="contained"
                                         color="primary"

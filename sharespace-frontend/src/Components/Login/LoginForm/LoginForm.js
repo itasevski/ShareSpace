@@ -2,17 +2,16 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import {Typography} from "@material-ui/core";
+import {CircularProgress, Typography} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
 import {CheckCircle, Error} from "@material-ui/icons";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
 
 const LoginForm = (props) => {
@@ -22,8 +21,11 @@ const LoginForm = (props) => {
     const [state, setState] = React.useState({
         username: "",
         password: "",
+
         error: false,
-        errorMessage: {}
+        errorMessage: {},
+
+        loginInProgress: false
     });
 
     const handleFieldChange = (event) => {
@@ -55,9 +57,15 @@ const LoginForm = (props) => {
                     setState({
                         ...state,
                         error: true,
-                        errorMessage: "Invalid authentication attempt for user " + username
+                        errorMessage: "Invalid authentication attempt for user " + username,
+                        loginInProgress: false
                     });
                 });
+
+        setState({
+            ...state,
+            loginInProgress: true
+        });
     }
 
     return (
@@ -71,6 +79,9 @@ const LoginForm = (props) => {
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
+                    {state.loginInProgress === true &&
+                    <CircularProgress style={{ margin: "15px" }} />
+                    }
                     {localStorage.getItem("successfulRegistration") === "true" &&
                     <Typography variant="subtitle1" style={{ color: "#4BB543" }}>
                         <CheckCircle style={{ color: "#4BB543" }} />&nbsp;
@@ -123,12 +134,12 @@ const LoginForm = (props) => {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link href="#" variant="body2">
+                                <Link to="#" variant="body2" style={{ color: "#3f51b5" }}>
                                     Forgot password?
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="/register" variant="body2">
+                                <Link to="/register" variant="body2" style={{ color: "#3f51b5" }}>
                                     Don't have an account? Sign Up
                                 </Link>
                             </Grid>

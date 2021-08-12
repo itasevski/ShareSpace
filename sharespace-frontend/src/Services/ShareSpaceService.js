@@ -25,6 +25,23 @@ const ShareSpaceService = {
                 Authorization: 'Bearer ' + token
             }
         });
+    },
+    updateCurrentUser: (token, id, firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
+        return AxiosShareSpace.post(`/api/users/update/${id}`, {
+            "firstName": firstName,
+            "lastName": lastName,
+            "phoneNumber": phoneNumber,
+            "bio": bio,
+            "facebookLink": facebookLink,
+            "twitterLink": twitterLink,
+            "instagramLink": instagramLink,
+            "type": type,
+            "vehicleModel": vehicleModel
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
     }
 }
 

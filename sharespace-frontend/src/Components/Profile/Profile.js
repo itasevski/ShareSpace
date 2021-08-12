@@ -80,9 +80,11 @@ const Profile = (props) => {
                         {items}
                     </Grid>
                     <Grid container justifyContent="center" style={{ paddingTop: "20px" }}>
-                        <Button color="primary" variant="outlined" href="/profile/edit">
-                            Edit profile
-                        </Button>
+                            <Link to="/profile/edit" style={{ textDecoration: "none", color: "#3f51b5" }}>
+                                <Button type="button" color="primary" variant="outlined">
+                                    Edit profile
+                                </Button>
+                            </Link>
                     </Grid>
                 </Grid>
                 <Grid item xs={6} style={{ marginTop: "100px" }}>

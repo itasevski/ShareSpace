@@ -38,16 +38,14 @@ public class AuthServiceImplementation implements AuthService {
 
         User user = null;
 
-        String phoneNumber = registrationDto.getPhoneNumber().length() <= 7 ? null : registrationDto.getPhoneNumber();
-
         if(registrationDto.getType() == Type.DRIVER) {
             user = new Driver(null, Role.ROLE_USER, Type.DRIVER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
-                    registrationDto.getFirstName(), registrationDto.getLastName(), phoneNumber, registrationDto.getEmail(), null,
+                    registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getPhoneNumber(), registrationDto.getEmail(), null,
                     null, null, null);
         }
         else {
             user = new Passenger(Role.ROLE_USER, Type.PASSENGER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
-                    registrationDto.getFirstName(), registrationDto.getLastName(), phoneNumber, registrationDto.getEmail(),
+                    registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getPhoneNumber(), registrationDto.getEmail(),
                     null, null, null, null);
         }
 
