@@ -38,6 +38,7 @@ const LoginForm = (props) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         if(localStorage.getItem("successfulRegistration") !== null) localStorage.removeItem("successfulRegistration");
+        if(localStorage.getItem("successfulPasswordChange") !== null) localStorage.removeItem("successfulPasswordChange");
 
         const username = state.username;
         const password = state.password;
@@ -86,6 +87,12 @@ const LoginForm = (props) => {
                     <Typography variant="subtitle1" style={{ color: "#4BB543" }}>
                         <CheckCircle style={{ color: "#4BB543" }} />&nbsp;
                         You have been successfully registered.
+                    </Typography>
+                    }
+                    {localStorage.getItem("successfulPasswordChange") === "true" &&
+                    <Typography variant="subtitle1" style={{ color: "#4BB543" }}>
+                        <CheckCircle style={{ color: "#4BB543" }} />&nbsp;
+                        Your password has been successfully changed.
                     </Typography>
                     }
                     {state.error === true &&

@@ -16,6 +16,4 @@ public class UserDto {
     private Type type;
     private String vehicleModel;
 
-    public UserDto() {}
-
 }

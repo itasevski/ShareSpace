@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import {FormLabel, Radio, RadioGroup, Typography} from "@material-ui/core";
+import {CircularProgress, FormLabel, Radio, RadioGroup, Typography} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -36,7 +36,9 @@ const RegisterForm = () => {
         isPhoneNumberValid: true,
 
         error: false,
-        errorMessage: {}
+        errorMessage: {},
+
+        registerInProgress: false
     });
 
     useEffect(() => {
@@ -100,9 +102,15 @@ const RegisterForm = () => {
                     setState({
                         ...state,
                         error: true,
-                        errorMessage: err.response.status + ": " + err.response.data.errorMessage
+                        errorMessage: err.response.status + ": " + err.response.data.errorMessage,
+                        registerInProgress: false
                     });
                 });
+
+        setState({
+            ...state,
+            registerInProgress: true
+        });
     }
 
     return (
@@ -115,6 +123,9 @@ const RegisterForm = () => {
                 <Typography component="h1" variant="h5">
                     Sign up
                 </Typography>
+                {state.registerInProgress === true &&
+                <CircularProgress style={{ margin: "15px" }} />
+                }
                 {state.arePasswordsEqual === false &&
                 <Typography variant="subtitle1" color="secondary">
                     <Error color="secondary" />&nbsp;

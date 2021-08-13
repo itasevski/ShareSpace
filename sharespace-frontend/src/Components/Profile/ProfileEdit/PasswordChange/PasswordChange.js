@@ -4,7 +4,7 @@ import Paper from "@material-ui/core/Paper";
 import PasswordChangeForm from "./PasswordChangeForm/PasswordChangeForm";
 import StyleOne from "../../../../Utilities/Styles/SecurityFormStyles/StyleOne";
 
-const PasswordChange = () => {
+const PasswordChange = (props) => {
     const classes = StyleOne();
 
     return (
@@ -14,7 +14,7 @@ const PasswordChange = () => {
                 <Paper className={classes.paper}>
                     <React.Fragment>
                         <React.Fragment>
-                            <PasswordChangeForm />
+                            <PasswordChangeForm userId={props.userId} onChangePassword={props.onChangePassword} onServerError={props.onServerError} />
                         </React.Fragment>
                     </React.Fragment>
                 </Paper>

@@ -4,14 +4,17 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.Driver;
 import mk.ukim.finki.sharespace.model.Passenger;
 import mk.ukim.finki.sharespace.model.abstraction.User;
+import mk.ukim.finki.sharespace.model.dto.PasswordChangeDto;
 import mk.ukim.finki.sharespace.model.dto.UserDto;
 import mk.ukim.finki.sharespace.model.enumeration.Role;
 import mk.ukim.finki.sharespace.model.enumeration.Type;
+import mk.ukim.finki.sharespace.model.exception.PasswordsDoNotMatchException;
 import mk.ukim.finki.sharespace.model.exception.UserNotFoundException;
 import mk.ukim.finki.sharespace.repository.UserRepository;
 import mk.ukim.finki.sharespace.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -69,6 +73,22 @@ public class UserServiceImplementation implements UserService {
         user.setFacebookLink(userDto.getFacebookLink());
         user.setTwitterLink(userDto.getTwitterLink());
         user.setInstagramLink(userDto.getInstagramLink());
+
+        return Optional.of(this.userRepository.save(user));
+    }
+
+    @Override
+    public Optional<User> changePassword(String id, PasswordChangeDto passwordChangeDto) {
+        User user = findById(id);
+
+        if(!this.passwordEncoder.matches(passwordChangeDto.getOldPassword(), user.getPassword())) {
+            throw new PasswordsDoNotMatchException("Incorrect old password");
+        }
+        if(!passwordChangeDto.getNewPassword().equals(passwordChangeDto.getConfirmNewPassword())) {
+            throw new PasswordsDoNotMatchException("Passwords do not match");
+        }
+
+        user.setPassword(this.passwordEncoder.encode(passwordChangeDto.getNewPassword()));
 
         return Optional.of(this.userRepository.save(user));
     }

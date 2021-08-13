@@ -1,6 +1,7 @@
 package mk.ukim.finki.sharespace.service;
 
 import mk.ukim.finki.sharespace.model.abstraction.User;
+import mk.ukim.finki.sharespace.model.dto.PasswordChangeDto;
 import mk.ukim.finki.sharespace.model.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -15,6 +16,8 @@ public interface UserService extends UserDetailsService {
     User findByUsername(String username);
 
     Optional<User> update(String id, UserDto userDto);
+
+    Optional<User> changePassword(String id, PasswordChangeDto passwordChangeDto);
 
     void delete(String id);
 

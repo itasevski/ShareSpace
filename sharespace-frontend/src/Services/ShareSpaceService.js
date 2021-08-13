@@ -42,6 +42,17 @@ const ShareSpaceService = {
                 Authorization: 'Bearer ' + token,
             }
         });
+    },
+    changeCurrentUserPassword: (token, id, oldPassword, newPassword, confirmNewPassword) => {
+        return AxiosShareSpace.post(`/api/users/changePassword/${id}`, {
+            "oldPassword": oldPassword,
+            "newPassword": newPassword,
+            "confirmNewPassword": confirmNewPassword
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
     }
 }
 

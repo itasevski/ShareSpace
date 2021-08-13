@@ -93,9 +93,9 @@ class App extends Component {
                     <Header username={this.state.userInfo.username} onLogout={this.logout} />
 
                     <Route path={"/home"} exact render={() => (
-                        localStorage.getItem("successfulRegistration") !== null ?
+                        localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
                             (
-                                localStorage.removeItem("successfulRegistration"),
+                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
                                 <Home items={this.state.homeItems}/>
                             ) :
                             (
@@ -103,10 +103,38 @@ class App extends Component {
                             )
                     )} />
 
-                    <Route path={"/about"} exact render={() => <About />} />
-                    <Route path={"/contact"} exact render={() => <Contact />} />
+                    <Route path={"/about"} exact render={() => (
+                        localStorage.getItem("successfulRegistration") !== null || localStorage.getItem("successfulPasswordChange") !== null ?
+                            (
+                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                    <About />
+                            ) :
+                            (
+                                <About />
+                            )
+                    )} />
+                    <Route path={"/contact"} exact render={() => (
+                        localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
+                            (
+                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                    <Contact />
+                            ) :
+                            (
+                                <Contact />
+                            )
+                    )} />
                     <Route path={"/login"} exact render={() => <Login onLogin={this.login} />} />
-                    <Route path={"/register"} exact render={() => <Register />} />
+
+                    <Route path={"/register"} exact render={() => (
+                        localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
+                            (
+                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                    <Register />
+                            ) :
+                            (
+                                <Register />
+                            )
+                    )} />
 
                     <Route path={"/offers"} exact render={() => (
                         localStorage.getItem("userJwtToken") !== null ?
@@ -154,7 +182,7 @@ class App extends Component {
                     <Route path={"/profile/edit/changePassword"} exact render={() => (
                         localStorage.getItem("userJwtToken") !== null ?
                             (
-                                <PasswordChange />
+                                <PasswordChange userId={this.state.userInfo.id} onChangePassword={this.changePassword} onServerError={this.logout} />
                             ) :
                             (
                                 <Redirect to={"/login"} />
@@ -229,11 +257,22 @@ class App extends Component {
             localStorage.getItem("userJwtToken"),
             this.state.userInfo.id,
             firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel)
-                .then((data) => {
-                    this.setState({
-                        userInfo: data.data
+                .then(
+                    (data) => {
+                        this.setState({
+                            userInfo: data.data
+                        });
+                },
+                    (err) => {
+                        localStorage.removeItem("userJwtToken");
+                        this.setState({
+                            userInfo: {}
+                        });
                     });
-                });
+    }
+
+    changePassword = () => {
+        this.logout();
     }
 
 }

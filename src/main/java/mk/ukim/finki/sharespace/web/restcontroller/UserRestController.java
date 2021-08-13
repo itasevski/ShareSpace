@@ -2,6 +2,7 @@ package mk.ukim.finki.sharespace.web.restcontroller;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.abstraction.User;
+import mk.ukim.finki.sharespace.model.dto.PasswordChangeDto;
 import mk.ukim.finki.sharespace.model.dto.UserDto;
 import mk.ukim.finki.sharespace.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,13 @@ public class UserRestController {
     @PostMapping("/update/{id}")
     public ResponseEntity<User> update(@PathVariable String id, @RequestBody UserDto userDto) {
         return this.userService.update(id, userDto)
+                .map(user -> ResponseEntity.ok().body(user))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/changePassword/{id}")
+    public ResponseEntity<User> changePassword(@PathVariable String id, @RequestBody PasswordChangeDto passwordChangeDto) {
+        return this.userService.changePassword(id, passwordChangeDto)
                 .map(user -> ResponseEntity.ok().body(user))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
