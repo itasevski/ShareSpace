@@ -2,6 +2,7 @@ package mk.ukim.finki.sharespace.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import mk.ukim.finki.sharespace.ShareSpaceApplication;
 import mk.ukim.finki.sharespace.model.abstraction.BaseEntity;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.enumeration.OfferType;
@@ -9,7 +10,6 @@ import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -17,9 +17,6 @@ import java.util.List;
 @Table(name = "sharespace_offer")
 @EqualsAndHashCode(callSuper = true)
 public class Offer extends BaseEntity {
-
-    @Transient
-    private DateTimeFormatter dateTimeFormatter;
 
     @Enumerated(EnumType.STRING)
     private OfferType offerType;
@@ -63,13 +60,13 @@ public class Offer extends BaseEntity {
         this.destination = destination;
 
         LocalDateTime now = LocalDateTime.now();
-        this.publishedAt = now.format(this.dateTimeFormatter);
+        this.publishedAt = now.format(ShareSpaceApplication.formatter);
 
-        LocalDateTime startDateTime = LocalDateTime.parse(startDate, this.dateTimeFormatter);
-        this.startDate = startDateTime.format(this.dateTimeFormatter);
+        LocalDateTime startDateTime = LocalDateTime.parse(startDate, ShareSpaceApplication.formatter);
+        this.startDate = startDateTime.format(ShareSpaceApplication.formatter);
 
-        LocalDateTime expirationDateTime = LocalDateTime.parse(startDate, this.dateTimeFormatter).minusMinutes(30);
-        this.expirationDate = expirationDateTime.format(this.dateTimeFormatter);
+        LocalDateTime expirationDateTime = LocalDateTime.parse(startDate, ShareSpaceApplication.formatter).minusMinutes(30);
+        this.expirationDate = expirationDateTime.format(ShareSpaceApplication.formatter);
     }
 
 }

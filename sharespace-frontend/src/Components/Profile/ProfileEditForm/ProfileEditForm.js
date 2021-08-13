@@ -9,6 +9,8 @@ import Typography from "@material-ui/core/Typography";
 import MuiPhoneNumber from "material-ui-phone-number";
 import Box from "@material-ui/core/Box";
 import {Link, useHistory} from "react-router-dom";
+import ShareSpaceService from "../../../Services/ShareSpaceService";
+import {CircularProgress} from "@material-ui/core";
 
 
 const ProfileEditForm = (props) => {
@@ -28,7 +30,9 @@ const ProfileEditForm = (props) => {
         countryCode: "",
 
         error: false,
-        errorMessage: ""
+        errorMessage: "",
+
+        updateInProgress: false
     });
 
     useEffect(() => {
@@ -82,8 +86,41 @@ const ProfileEditForm = (props) => {
         const type = state.type;
         const vehicleModel = state.vehicleModel !== "" ? state.vehicleModel : null;
 
-        props.onProfileEdit(firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel);
-        history.push("/profile");
+        profileEdit(firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel);
+    }
+
+    const profileEdit = (firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
+        ShareSpaceService.updateCurrentUser(
+            localStorage.getItem("userJwtToken"),
+            props.userInfo.id,
+            firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel)
+            .then(
+                (data) => {
+                    setState({
+                        ...state,
+                        updateInProgress: false
+                    });
+                    props.onProfileEdit(data.data);
+                    history.push("/profile");
+                },
+                (err) => {
+                    if(err.response === undefined) {
+                        setState({
+                            ...state,
+                            error: true,
+                            errorMessage: "Saving failed: The ShareSpace server is down.",
+                            updateInProgress: false
+                        });
+                    }
+                    else {
+                        props.onServerError();
+                    }
+                });
+
+        setState({
+            ...state,
+            updateInProgress: true
+        });
     }
 
     return (
@@ -244,6 +281,9 @@ const ProfileEditForm = (props) => {
                                     style={{ marginLeft: "15px" }}
                                 >
                                     Save
+                                    {state.updateInProgress === true &&
+                                    <CircularProgress style={{ marginLeft: "10px", color: "white" }} size={15} />
+                                    }
                                 </Button>
                             </Grid>
                         </Box>
@@ -263,7 +303,8 @@ const ProfileEditForm = (props) => {
         setState({
             ...state,
             error: error,
-            errorMessage: "Invalid phone number"
+            errorMessage: "Invalid phone number",
+            updateInProgress: false
         });
 
         return error;

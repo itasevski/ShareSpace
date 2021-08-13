@@ -99,12 +99,22 @@ const RegisterForm = () => {
                     history.push("/login");
                 },
                 (err) => {
-                    setState({
-                        ...state,
-                        error: true,
-                        errorMessage: err.response.status + ": " + err.response.data.errorMessage,
-                        registerInProgress: false
-                    });
+                    if(err.response === undefined) {
+                        setState({
+                            ...state,
+                            error: true,
+                            errorMessage: "Registration failed: The ShareSpace server is down.",
+                            registerInProgress: false
+                        });
+                    }
+                    else {
+                        setState({
+                            ...state,
+                            error: true,
+                            errorMessage: err.response.status + ": " + err.response.data.errorMessage,
+                            registerInProgress: false
+                        });
+                    }
                 });
 
         setState({

@@ -53,6 +53,17 @@ const ShareSpaceService = {
                 Authorization: 'Bearer ' + token,
             }
         });
+    },
+    sendMessage: (token, id, subject, body) => {
+        return AxiosShareSpace.post("/api/message/create", {
+            "userId": id,
+            "subject": subject,
+            "body": body
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
     }
 }
 

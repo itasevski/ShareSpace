@@ -55,12 +55,22 @@ const LoginForm = (props) => {
                     history.push("/");
             },
                 (err) => {
-                    setState({
-                        ...state,
-                        error: true,
-                        errorMessage: "Invalid authentication attempt for user " + username,
-                        loginInProgress: false
-                    });
+                    if(err.response === undefined) {
+                        setState({
+                            ...state,
+                            error: true,
+                            errorMessage: "Login failed: The ShareSpace server is down.",
+                            loginInProgress: false
+                        });
+                    }
+                    else {
+                        setState({
+                            ...state,
+                            error: true,
+                            errorMessage: "Invalid authentication attempt for user " + username,
+                            loginInProgress: false
+                        });
+                    }
                 });
 
         setState({

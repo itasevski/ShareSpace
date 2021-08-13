@@ -18,13 +18,10 @@ public class ShareSpaceApplication {
     }
 
     @Bean
-    DateTimeFormatter dateTimeFormatter() {
-        return DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    }
-
-    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
 }

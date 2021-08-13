@@ -16,6 +16,7 @@ import PasswordChange from "../Profile/ProfileEdit/PasswordChange/PasswordChange
 import GeocodeService from "../../Services/GeocodeService";
 import ShareSpaceService from "../../Services/ShareSpaceService";
 import jwt_decode from "jwt-decode";
+import {CircularProgress} from "@material-ui/core";
 
 class App extends Component {
 
@@ -82,117 +83,129 @@ class App extends Component {
             // CURRENT USER VARIABLES
             userInfo: {},
             userCity: "",
-            userMunicipality: ""
+            userMunicipality: "",
+
+            // MISCELLANEOUS VARIABLES
+            loadingScreen: true
         }
     }
 
     render() {
         return (
             <main>
-                <Router>
-                    <Header username={this.state.userInfo.username} onLogout={this.logout} />
+                {this.state.loadingScreen === true ?
+                    (
+                        <CircularProgress id="loadingCircle"/>
+                    ) :
+                    (
+                        <Router>
+                            <Header username={this.state.userInfo.username} onLogout={this.logout} />
 
-                    <Route path={"/home"} exact render={() => (
-                        localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
-                            (
-                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
-                                <Home items={this.state.homeItems}/>
-                            ) :
-                            (
-                                <Home items={this.state.homeItems}/>
-                            )
-                    )} />
+                            <Route path={"/home"} exact render={() => (
+                                localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
+                                    (
+                                        localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                            <Home items={this.state.homeItems}/>
+                                    ) :
+                                    (
+                                        <Home items={this.state.homeItems}/>
+                                    )
+                            )} />
 
-                    <Route path={"/about"} exact render={() => (
-                        localStorage.getItem("successfulRegistration") !== null || localStorage.getItem("successfulPasswordChange") !== null ?
-                            (
-                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
-                                    <About />
-                            ) :
-                            (
-                                <About />
-                            )
-                    )} />
-                    <Route path={"/contact"} exact render={() => (
-                        localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
-                            (
-                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
-                                    <Contact />
-                            ) :
-                            (
-                                <Contact />
-                            )
-                    )} />
-                    <Route path={"/login"} exact render={() => <Login onLogin={this.login} />} />
+                            <Route path={"/about"} exact render={() => (
+                                localStorage.getItem("successfulRegistration") !== null || localStorage.getItem("successfulPasswordChange") !== null ?
+                                    (
+                                        localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                            <About />
+                                    ) :
+                                    (
+                                        <About />
+                                    )
+                            )} />
 
-                    <Route path={"/register"} exact render={() => (
-                        localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
-                            (
-                                localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
-                                    <Register />
-                            ) :
-                            (
-                                <Register />
-                            )
-                    )} />
+                            <Route path={"/contact"} exact render={() => (
+                                localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
+                                    (
+                                        localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                            <Contact userId={this.state.userInfo.id} />
+                                    ) :
+                                    (
+                                        <Contact userId={this.state.userInfo.id} />
+                                    )
+                            )} />
 
-                    <Route path={"/offers"} exact render={() => (
-                        localStorage.getItem("userJwtToken") !== null ?
-                            (
-                                <Offers userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
-                            ) :
-                            (
-                                <Redirect to={"/login"} />
-                            )
-                    )}/>
+                            <Route path={"/login"} exact render={() => <Login onLogin={this.login} />} />
 
-                    <Route path={"/createOffer"} exact render={() => (
-                        localStorage.getItem("userJwtToken") !== null ?
-                            (
-                                <CreateOffer />
-                            ) :
-                            (
-                                <Redirect to={"/login"} />
-                            )
-                    )} />
+                            <Route path={"/register"} exact render={() => (
+                                localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
+                                    (
+                                        localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
+                                            <Register />
+                                    ) :
+                                    (
+                                        <Register />
+                                    )
+                            )} />
 
-                    <Route path={"/profile"} exact render={() => (
-                        localStorage.getItem("userJwtToken") !== null ?
-                            (
-                                <Profile item={this.state.profileItems[0]}
-                                         userInfo={this.state.userInfo}
-                                         userCity={this.state.userCity}
-                                         userMunicipality={this.state.userMunicipality} />
-                            ) :
-                            (
-                                <Redirect to={"/login"} />
-                            )
-                    )} />
+                            <Route path={"/offers"} exact render={() => (
+                                localStorage.getItem("userJwtToken") !== null ?
+                                    (
+                                        <Offers userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
+                                    ) :
+                                    (
+                                        <Redirect to={"/login"} />
+                                    )
+                            )}/>
 
-                    <Route path={"/profile/edit"} exact render={() => (
-                        localStorage.getItem("userJwtToken") !== null ?
-                            (
-                                <ProfileEdit userInfo={this.state.userInfo} onProfileEdit={this.profileEdit} />
-                            ) :
-                            (
-                                <Redirect to={"/login"} />
-                            )
-                    )} />
+                            <Route path={"/createOffer"} exact render={() => (
+                                localStorage.getItem("userJwtToken") !== null ?
+                                    (
+                                        <CreateOffer />
+                                    ) :
+                                    (
+                                        <Redirect to={"/login"} />
+                                    )
+                            )} />
 
-                    <Route path={"/profile/edit/changePassword"} exact render={() => (
-                        localStorage.getItem("userJwtToken") !== null ?
-                            (
-                                <PasswordChange userId={this.state.userInfo.id} onChangePassword={this.changePassword} onServerError={this.logout} />
-                            ) :
-                            (
-                                <Redirect to={"/login"} />
-                            )
-                    )} />
+                            <Route path={"/profile"} exact render={() => (
+                                localStorage.getItem("userJwtToken") !== null ?
+                                    (
+                                        <Profile item={this.state.profileItems[0]}
+                                                 userInfo={this.state.userInfo}
+                                                 userCity={this.state.userCity}
+                                                 userMunicipality={this.state.userMunicipality} />
+                                    ) :
+                                    (
+                                        <Redirect to={"/login"} />
+                                    )
+                            )} />
 
-                    <Route path={"/"} exact render={() => <Redirect to={"/home"} /> }/>
+                            <Route path={"/profile/edit"} exact render={() => (
+                                localStorage.getItem("userJwtToken") !== null ?
+                                    (
+                                        <ProfileEdit userInfo={this.state.userInfo} onProfileEdit={this.profileEdit} onServerError={this.logout} />
+                                    ) :
+                                    (
+                                        <Redirect to={"/login"} />
+                                    )
+                            )} />
 
-                    <Footer />
-                </Router>
+                            <Route path={"/profile/edit/changePassword"} exact render={() => (
+                                localStorage.getItem("userJwtToken") !== null ?
+                                    (
+                                        <PasswordChange userId={this.state.userInfo.id} onChangePassword={this.changePassword} onServerError={this.logout} />
+                                    ) :
+                                    (
+                                        <Redirect to={"/login"} />
+                                    )
+                            )} />
+
+                            <Route path={"/"} exact render={() => <Redirect to={"/home"} /> }/>
+
+                            <Footer />
+                        </Router>
+                    )
+                }
             </main>
         );
     }
@@ -205,15 +218,23 @@ class App extends Component {
                 .then(
                     (data) => {
                         this.setState({
-                            userInfo: data.data
+                            userInfo: data.data,
+                            loadingScreen: false
                         });
-                },
+                    },
                     (err) => {
                         localStorage.removeItem("userJwtToken");
                         this.setState({
-                            userInfo: {}
+                            userInfo: {},
+                            loadingScreen: false
                         });
                     });
+        }
+        else {
+            this.setState({
+                loadingScreen: false
+            });
+
         }
 
         // this.loadGeolocationData();
@@ -252,27 +273,14 @@ class App extends Component {
         });
     }
 
-    profileEdit = (firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
-        ShareSpaceService.updateCurrentUser(
-            localStorage.getItem("userJwtToken"),
-            this.state.userInfo.id,
-            firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel)
-                .then(
-                    (data) => {
-                        this.setState({
-                            userInfo: data.data
-                        });
-                },
-                    (err) => {
-                        localStorage.removeItem("userJwtToken");
-                        this.setState({
-                            userInfo: {}
-                        });
-                    });
-    }
-
     changePassword = () => {
         this.logout();
+    }
+
+    profileEdit = (data) => {
+        this.setState({
+            userInfo: data
+        });
     }
 
 }

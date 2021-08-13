@@ -76,7 +76,7 @@ const ProfileEdit = (props) => {
                     </Typography>
                     <React.Fragment>
                         <React.Fragment>
-                            <ProfileEditForm userInfo={props.userInfo} onProfileEdit={props.onProfileEdit} />
+                            <ProfileEditForm userInfo={props.userInfo} onProfileEdit={props.onProfileEdit} onServerError={props.onServerError} />
                         </React.Fragment>
                     </React.Fragment>
                 </Paper>

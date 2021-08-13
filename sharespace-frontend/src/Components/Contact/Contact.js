@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Contact = () => {
+const Contact = (props) => {
     const classes = useStyles();
 
     return (
@@ -45,7 +45,7 @@ const Contact = () => {
                 <Paper className={classes.paper}>
                     <React.Fragment>
                         <React.Fragment>
-                            <ContactForm />
+                            <ContactForm userId={props.userId} />
                         </React.Fragment>
                     </React.Fragment>
                 </Paper>
