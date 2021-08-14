@@ -37,11 +37,11 @@ public class UserServiceImplementation implements UserService {
         User user = null;
         if(userDto.getType() == Type.DRIVER) {
             user = new Driver(userDto.getVehicleModel(), Role.ROLE_USER, Type.DRIVER, "testusername", "testpass", userDto.getFirstName(), userDto.getLastName(),
-                    userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
+                    userDto.getCity(), userDto.getMunicipality(), userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
         }
         else {
             user = new Passenger(Role.ROLE_USER, Type.PASSENGER, "testusername", "testpass", userDto.getFirstName(), userDto.getLastName(),
-                    userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
+                    userDto.getCity(), userDto.getMunicipality(), userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
         }
 
         return Optional.of(this.userRepository.save(user));
@@ -67,7 +67,9 @@ public class UserServiceImplementation implements UserService {
             ((Driver) user).setVehicleModel(userDto.getVehicleModel());
         }
         user.setFirstName(userDto.getFirstName());
-        user.setLastName(user.getLastName());
+        user.setLastName(userDto.getLastName());
+        user.setCity(userDto.getCity());
+        user.setMunicipality(userDto.getMunicipality());
         user.setBio(userDto.getBio());
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setFacebookLink(userDto.getFacebookLink());

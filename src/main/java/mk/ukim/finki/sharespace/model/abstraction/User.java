@@ -27,6 +27,8 @@ public abstract class User extends BaseEntity implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
+    private String city;
+    private String municipality;
     private String phoneNumber;
     private String email;
     private String facebookLink;
@@ -46,14 +48,16 @@ public abstract class User extends BaseEntity implements UserDetails {
 
     public User() {}
 
-    public User(Role role, Type type, String username, String password, String firstName, String lastName, String phoneNumber, String email,
-                String facebookLink, String twitterLink, String instagramLink, String bio) {
+    public User(Role role, Type type, String username, String password, String firstName, String lastName, String city, String municipality,
+                String phoneNumber, String email, String facebookLink, String twitterLink, String instagramLink, String bio) {
         this.role = role;
         this.type = type;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.city = city;
+        this.municipality = municipality;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.facebookLink = facebookLink;

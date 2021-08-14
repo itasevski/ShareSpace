@@ -40,12 +40,12 @@ public class AuthServiceImplementation implements AuthService {
 
         if(registrationDto.getType() == Type.DRIVER) {
             user = new Driver(null, Role.ROLE_USER, Type.DRIVER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
-                    registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getPhoneNumber(), registrationDto.getEmail(), null,
+                    registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getCity(), registrationDto.getMunicipality(), registrationDto.getPhoneNumber(), registrationDto.getEmail(), null,
                     null, null, null);
         }
         else {
             user = new Passenger(Role.ROLE_USER, Type.PASSENGER, registrationDto.getUsername(), this.passwordEncoder.encode(registrationDto.getPassword()),
-                    registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getPhoneNumber(), registrationDto.getEmail(),
+                    registrationDto.getFirstName(), registrationDto.getLastName(), registrationDto.getCity(), registrationDto.getMunicipality(), registrationDto.getPhoneNumber(), registrationDto.getEmail(),
                     null, null, null, null);
         }
 

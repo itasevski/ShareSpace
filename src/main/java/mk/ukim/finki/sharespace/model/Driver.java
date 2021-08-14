@@ -18,9 +18,9 @@ public class Driver extends User {
     public Driver() {}
 
     public Driver(String vehicleModel,
-                  Role role, Type type, String username, String password, String firstName, String lastName, String phoneNumber, String email,
-                  String facebookLink, String twitterLink, String instagramLink, String bio) {
-        super(role, type, username, password, firstName, lastName, phoneNumber, email, facebookLink, twitterLink, instagramLink, bio);
+                  Role role, Type type, String username, String password, String firstName, String lastName, String city, String municipality,
+                  String phoneNumber, String email, String facebookLink, String twitterLink, String instagramLink, String bio) {
+        super(role, type, username, password, firstName, lastName, city, municipality, phoneNumber, email, facebookLink, twitterLink, instagramLink, bio);
         this.vehicleModel = vehicleModel;
     }
 

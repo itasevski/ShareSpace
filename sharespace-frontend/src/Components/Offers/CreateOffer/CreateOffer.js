@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const CreateOffer = () => {
+const CreateOffer = (props) => {
     const classes = useStyles();
 
     return (
@@ -55,25 +55,7 @@ const CreateOffer = () => {
                     </Typography>
                     <React.Fragment>
                             <React.Fragment>
-                                <CreateOfferForm />
-                                <div className={classes.buttons}>
-                                    <Link to="/offers" style={{ textDecoration: "none", color: "#3f51b5" }}>
-                                        <Button
-                                            type="button"
-                                            color="primary"
-                                            variant="outlined"
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </Link>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        className={classes.button}
-                                    >
-                                        Create
-                                    </Button>
-                                </div>
+                                <CreateOfferForm userCity={props.userCity} userMunicipality={props.userMunicipality} userType={props.userType} />
                             </React.Fragment>
                     </React.Fragment>
                 </Paper>

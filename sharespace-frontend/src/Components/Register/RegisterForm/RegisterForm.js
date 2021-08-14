@@ -14,13 +14,15 @@ import {Link, useHistory} from "react-router-dom";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
 import MuiPhoneNumber from "material-ui-phone-number";
 
-const RegisterForm = () => {
+const RegisterForm = (props) => {
     const classes = StyleTwo();
 
     const history = useHistory();
     const [state, setState] = React.useState({
         firstName: "",
         lastName: "",
+        city: "",
+        municipality: "",
         email: "",
         phoneNumber: "",
         username: "",
@@ -44,6 +46,8 @@ const RegisterForm = () => {
     useEffect(() => {
         setState({
             ...state,
+            city: props.userCity,
+            municipality: props.userMunicipality,
             countryCode: document.getElementById("phoneNumber").value
         });
     }, []);
@@ -76,6 +80,8 @@ const RegisterForm = () => {
 
         const firstName = state.firstName;
         const lastName = state.lastName;
+        const city = state.city;
+        const municipality = state.municipality;
         const email = state.email;
         const username = state.username;
         const password = state.password;
@@ -83,15 +89,15 @@ const RegisterForm = () => {
         const type = state.type;
 
         if(validatePassword(password, confirmPassword)) {
-            register(firstName, lastName, email, phoneNumber, username, password, confirmPassword, type);
+            register(firstName, lastName, city, municipality, email, phoneNumber, username, password, confirmPassword, type);
         }
         else {
             console.error("Registration failed.");
         }
     }
 
-    const register = (firstName, lastName, email, phoneNumber, username, password, confirmPassword, type) => {
-        ShareSpaceService.register(firstName, lastName, email, phoneNumber, username, password, confirmPassword, type)
+    const register = (firstName, lastName, city, municipality, email, phoneNumber, username, password, confirmPassword, type) => {
+        ShareSpaceService.register(firstName, lastName, city, municipality, email, phoneNumber, username, password, confirmPassword, type)
             .then(
                 (data) => {
                     localStorage.setItem("successfulRegistration", "true");
@@ -190,6 +196,32 @@ const RegisterForm = () => {
                                 label="Last Name"
                                 name="lastName"
                                 autoComplete="lname"
+                                onChange={handleFieldChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                name="city"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="city"
+                                label={state.city === "" ? "City" : ""}
+                                value={state.city}
+                                autoComplete="city"
+                                onChange={handleFieldChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="municipality"
+                                label={state.municipality === "" ? "Municipality" : ""}
+                                value={state.municipality}
+                                name="municipality"
+                                autoComplete="municipality"
                                 onChange={handleFieldChange}
                             />
                         </Grid>

@@ -140,10 +140,10 @@ class App extends Component {
                                 localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
                                     (
                                         localStorage.removeItem("successfulRegistration"), localStorage.removeItem("successfulPasswordChange"),
-                                            <Register />
+                                            <Register userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
                                     ) :
                                     (
-                                        <Register />
+                                        <Register userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
                                     )
                             )} />
 
@@ -160,7 +160,7 @@ class App extends Component {
                             <Route path={"/createOffer"} exact render={() => (
                                 localStorage.getItem("userJwtToken") !== null ?
                                     (
-                                        <CreateOffer />
+                                        <CreateOffer userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} userType={this.state.userInfo.type} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -183,7 +183,9 @@ class App extends Component {
                             <Route path={"/profile/edit"} exact render={() => (
                                 localStorage.getItem("userJwtToken") !== null ?
                                     (
-                                        <ProfileEdit userInfo={this.state.userInfo} onProfileEdit={this.profileEdit} onServerError={this.logout} />
+                                        <ProfileEdit userInfo={this.state.userInfo}
+                                                     onProfileEdit={this.profileEdit}
+                                                     onServerError={this.logout} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -237,23 +239,23 @@ class App extends Component {
 
         }
 
-        // this.loadGeolocationData();
+        this.loadGeolocationData();
     }
 
     // REPOSITORY FETCH FUNCTIONS
 
-    // loadGeolocationData = () => {
-    //     navigator.geolocation.getCurrentPosition((position) => {
-    //         GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
-    //             .then((data) => {
-    //                 this.setState({
-    //                     geolocationData: data.data,
-    //                     userMunicipality: data.data.results[0].address_components[2].long_name,
-    //                     userCity: data.data.results[0].address_components[3].long_name
-    //                 });
-    //             });
-    //     });
-    // }
+    loadGeolocationData = () => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
+                .then((data) => {
+                    this.setState({
+                        geolocationData: data.data,
+                        userMunicipality: data.data.results[0].address_components[2].long_name,
+                        userCity: data.data.results[0].address_components[3].long_name
+                    });
+                });
+        });
+    }
 
     login = () => {
         const decodedJwtToken = jwt_decode(localStorage.getItem("userJwtToken"));

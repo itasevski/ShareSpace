@@ -54,7 +54,12 @@ const Profile = (props) => {
                     }
                     <Grid container justifyContent="center" className="userInfo">
                         <Typography variant="subtitle2">
-                            {props.userCity}, {props.userMunicipality}
+                            Home location: {props.userInfo.city}, {props.userInfo.municipality}
+                        </Typography>
+                    </Grid>
+                    <Grid container justifyContent="center" className="userInfo">
+                        <Typography variant="subtitle2">
+                            Current location: {props.userCity}, {props.userMunicipality}
                         </Typography>
                     </Grid>
                     <Grid container justifyContent="center" className="userInfo">
@@ -71,9 +76,9 @@ const Profile = (props) => {
                     }
                     <Grid container justifyContent="center" className="userInfo">
                         <Typography variant="subtitle2">
-                            <Link to="#" className="profileLinks"><Facebook /></Link>
-                            <Link to="#" className="profileLinks"><Twitter /></Link>
-                            <Link to="#" className="profileLinks"><Instagram /></Link>
+                            <a href={props.userInfo.facebookLink} target="_blank" className="profileLinks"><Facebook /></a>
+                            <a href={props.userInfo.twitterLink} target="_blank" className="profileLinks"><Twitter /></a>
+                            <a href={props.userInfo.instagramLink} target="_blank" className="profileLinks"><Instagram /></a>
                         </Typography>
                     </Grid>
                     <Grid container justifyContent="center">

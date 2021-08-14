@@ -8,6 +8,8 @@ public class UserDto {
 
     private String firstName;
     private String lastName;
+    private String city;
+    private String municipality;
     private String phoneNumber;
     private String bio;
     private String facebookLink;

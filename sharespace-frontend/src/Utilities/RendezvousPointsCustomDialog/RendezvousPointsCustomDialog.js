@@ -1,17 +1,41 @@
 import React from "react";
 import Transition from "../Transition/Transition";
 import {
-    Checkbox, Dialog,
+    Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControlLabel,
-    FormGroup,
-    FormLabel, Typography
+    FormGroup, IconButton, Typography,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import {Clear} from "@material-ui/icons";
 
 const RendezvousPointsCustomDialog = (props) => {
+    const [state, setState] = React.useState({
+        rendezvousPoint: ""
+    });
+
+    const handleFieldChange = (event) => {
+        setState({
+            ...state,
+            [event.target.name]: event.target.value
+        });
+    }
+
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+        document.getElementById("rendezvousPoint").value = "";
+
+        const rendezvousPoint = state.rendezvousPoint;
+
+        props.handleDialogSubmit(rendezvousPoint);
+    }
+
+    const handleRendezvousPointRemove = (index) => {
+        props.handleRendezvousPointRemove(index);
+    }
+
     return (
         <Dialog
             open={props.dialogOpen}
@@ -20,53 +44,58 @@ const RendezvousPointsCustomDialog = (props) => {
             onClose={props.handleDialogClose}
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
+            fullWidth
+            maxWidth="sm"
         >
             {props.isViewDialog === false &&
-                <DialogTitle id="alert-dialog-slide-title">Select rendezvous points</DialogTitle>
+                <DialogTitle id="alert-dialog-slide-title">Add rendezvous points</DialogTitle>
             }
             {props.isViewDialog === true &&
-                <DialogTitle id="alert-dialog-slide-title">Selected rendezvous points</DialogTitle>
+                <DialogTitle id="alert-dialog-slide-title">Added rendezvous points</DialogTitle>
             }
-            <DialogContent>
-                {props.isViewDialog === false &&
-                    <FormLabel component="legend">Available rendezvous points:</FormLabel>
-                }
-                <FormGroup id={props.isViewDialog === true ? "" : "rendezvousPointsForm"}>
-                    {props.isViewDialog === true ?
-                        props.isRendezvousPointSelected === true ?
-                        props.rendezvousPoints
-                            .filter(rendezvousPoint => rendezvousPoint.selected === true)
-                            .map(rendezvousPoint => {
-                                return (
-                                    <Typography variant="subtitle1">
-                                        {rendezvousPoint.rendezvousPoint}
-                                    </Typography>
-                                )
-                            })
-                            :
-                            <Typography variant="h6" color="textSecondary">No rendezvous points selected.</Typography>
-                        :
-                        props.rendezvousPoints.map((rendezvousPoint) => {
-                                return (
-                                    <FormControlLabel
-                                        control={<Checkbox color="primary" name={rendezvousPoint.rendezvousPoint}/>}
-                                        label={rendezvousPoint.rendezvousPoint}
-                                    />
-                                );
-                            })
-                    }
-                </FormGroup>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={props.handleDialogClose} color="primary">
-                    Close
-                </Button>
-                {props.isViewDialog === false &&
-                    <Button onClick={props.handleDialogSubmit} color="primary">
-                        Submit
+            <form onSubmit={handleFormSubmit}>
+                <DialogContent>
+                    <FormGroup id={props.isViewDialog === true ? "" : "rendezvousPointsForm"}>
+                        {props.isViewDialog === true ?
+                            (
+                                props.rendezvousPoints.length > 0 ?
+                                    props.rendezvousPoints.map((rendezvousPoint, index) => {
+                                        return (
+                                            <Typography variant="subtitle1">
+                                                <IconButton onClick={() => handleRendezvousPointRemove(index)} style={{ marginRight: "5px" }}>
+                                                    <Clear style={{ fontSize: "15px" }}/>
+                                                </IconButton>
+                                                {rendezvousPoint}
+                                            </Typography>
+                                        )
+                                    }) :
+                                    <Typography variant="h6" color="textSecondary">No rendezvous points added.</Typography>
+                            ) :
+                            (
+                                <TextField
+                                    id="rendezvousPoint"
+                                    name="rendezvousPoint"
+                                    label="Type rendezvous point related to your offer..."
+                                    required
+                                    fullWidth
+                                    onChange={handleFieldChange}
+                                />
+                            )}
+                    </FormGroup>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={props.handleDialogClose} color="primary">
+                        Close
                     </Button>
-                }
-            </DialogActions>
+                    {props.isViewDialog === false &&
+                        <Button
+                            type="submit"
+                            color="primary">
+                            Submit
+                        </Button>
+                    }
+                </DialogActions>
+            </form>
         </Dialog>
     );
 }

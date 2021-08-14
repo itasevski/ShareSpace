@@ -7,10 +7,12 @@ const ShareSpaceService = {
             "password": password,
         });
     },
-    register: (firstName, lastName, email, phoneNumber, username, password, confirmPassword, type) => {
+    register: (firstName, lastName, city, municipality, email, phoneNumber, username, password, confirmPassword, type) => {
         return AxiosShareSpace.post("/api/auth/register", {
             "firstName": firstName,
             "lastName": lastName,
+            "city": city,
+            "municipality": municipality,
             "email": email,
             "phoneNumber": phoneNumber,
             "username": username,
@@ -26,10 +28,12 @@ const ShareSpaceService = {
             }
         });
     },
-    updateCurrentUser: (token, id, firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
+    updateCurrentUser: (token, id, firstName, lastName, city, municipality, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
         return AxiosShareSpace.post(`/api/users/update/${id}`, {
             "firstName": firstName,
             "lastName": lastName,
+            "city": city,
+            "municipality": municipality,
             "phoneNumber": phoneNumber,
             "bio": bio,
             "facebookLink": facebookLink,

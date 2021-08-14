@@ -12,6 +12,7 @@ import {ArrowDownward, ArrowUpward, Clear, VerifiedUserRounded} from "@material-
 import Box from "@material-ui/core/Box";
 import FiltersCustomDialog from "../../Utilities/FiltersCustomDialog/FiltersCustomDialog";
 import {Link} from "react-router-dom";
+import Offer from "./Offer/Offer";
 
 class Offers extends Component {
     constructor(props) {
@@ -80,7 +81,7 @@ class Offers extends Component {
                                 <Typography variant="subtitle1">Active filters:</Typography>
                                 {this.state.filters.myLocation === true &&
                                 <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("myLocation")}>
+                                    <IconButton onClick={() => this.handleFilterClear("myLocation")} style={{ marginRight: "5px" }}>
                                         <Clear style={{ fontSize: "15px" }}/>
                                     </IconButton>
                                     My Location
@@ -196,92 +197,7 @@ class Offers extends Component {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        <TableRow>
-                                            <TableCell scope="row">
-                                                <Grid container alignItems="center">
-                                                    <Grid item xs={4}>
-                                                        <Grid container>
-                                                            <VerifiedUserRounded style={{ fontSize: "100px" }} />
-                                                        </Grid>
-                                                    </Grid>
-                                                    <Grid item xs={8}>
-                                                        <Grid container>
-                                                            <Typography variant="h6">Aleksandar Antov</Typography>
-                                                        </Grid>
-                                                        <Typography variant="subtitle2">Published at: 17.07.2021, 18:34</Typography>
-                                                    </Grid>
-                                                </Grid>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Passenger offer</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">18.07.2021, 16:00</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">3</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Shampionche - Kisela Voda</Typography>
-                                                <Typography variant="subtitle1">Rampa - Kisela Voda</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Staro Lisiche</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Taxi</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">- Aleksandar Antov</Typography>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Button variant="contained" style={{ backgroundColor: "green", color: "white" }}>JOIN</Button>
-                                                <Typography variant="subtitle2">Expires in: 20h</Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell scope="row">
-                                                <Grid container alignItems="center">
-                                                    <Grid item xs={4}>
-                                                        <Grid container>
-                                                            <VerifiedUserRounded style={{ fontSize: "100px" }} />
-                                                        </Grid>
-                                                    </Grid>
-                                                    <Grid item xs={8}>
-                                                        <Grid container>
-                                                            <Typography variant="h6">Martin Martinov</Typography>
-                                                        </Grid>
-                                                        <Typography variant="subtitle2">Published at: 17.07.2021, 19:58</Typography>
-                                                    </Grid>
-                                                </Grid>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Driver offer</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">18.07.2021, 19:00</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">3</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Shampionche - Kisela Voda</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Skopje City Mall</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">Volswagen Polo 2005</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="subtitle1">- Martin Martinov</Typography>
-                                                <Typography variant="subtitle1">- Panche Pankov</Typography>
-                                                <Typography variant="subtitle1">- Jovan Jovanov</Typography>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Button variant="contained" disabled>FULL</Button>
-                                            </TableCell>
-                                        </TableRow>
+                                        <Offer />
                                     </TableBody>
                                 </Table>
                             </TableContainer>

@@ -19,6 +19,8 @@ const ProfileEditForm = (props) => {
     const [state, setState] = React.useState({
         firstName: "",
         lastName: "",
+        city: "",
+        municipality: "",
         vehicleModel: "",
         phoneNumber: "",
         bio: "",
@@ -40,6 +42,8 @@ const ProfileEditForm = (props) => {
             ...state,
             firstName: props.userInfo.firstName,
             lastName: props.userInfo.lastName,
+            city: props.userInfo.city,
+            municipality: props.userInfo.municipality,
             vehicleModel: props.userInfo.vehicleModel,
             phoneNumber: props.userInfo.phoneNumber,
             bio: props.userInfo.bio,
@@ -79,6 +83,8 @@ const ProfileEditForm = (props) => {
 
         const firstName = state.firstName !== "" ? state.firstName : props.userInfo.firstName;
         const lastName = state.lastName !== "" ? state.lastName : props.userInfo.lastName;
+        const city = state.city !== "" ? state.city : props.userInfo.city;
+        const municipality = state.municipality !== "" ? state.municipality : props.userInfo.municipality;
         const bio = state.bio !== "" ? state.bio : null;
         const facebookLink = state.facebookLink !== "" ? state.facebookLink : null;
         const twitterLink = state.twitterLink !== "" ? state.twitterLink : null;
@@ -86,14 +92,14 @@ const ProfileEditForm = (props) => {
         const type = state.type;
         const vehicleModel = state.vehicleModel !== "" ? state.vehicleModel : null;
 
-        profileEdit(firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel);
+        profileEdit(firstName, lastName, city, municipality, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel);
     }
 
-    const profileEdit = (firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
+    const profileEdit = (firstName, lastName, city, municipality, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
         ShareSpaceService.updateCurrentUser(
             localStorage.getItem("userJwtToken"),
             props.userInfo.id,
-            firstName, lastName, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel)
+            firstName, lastName, city, municipality, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel)
             .then(
                 (data) => {
                     setState({
@@ -189,6 +195,34 @@ const ProfileEditForm = (props) => {
                                         label={state.lastName === "" ? "Change last name" : ""}
                                         fullWidth
                                         value={state.lastName}
+                                        onChange={handleFieldChange}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={2} justifyContent="center">
+                            <Grid item xs={6}>
+                                <Grid container justifyContent="center" className="profileEditInfo">
+                                    <TextField
+                                        variant="outlined"
+                                        id="city"
+                                        name="city"
+                                        label={state.city === "" ? "Change your city" : ""}
+                                        fullWidth
+                                        value={state.city}
+                                        onChange={handleFieldChange}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Grid container justifyContent="center" className="profileEditInfo">
+                                    <TextField
+                                        variant="outlined"
+                                        id="municipality"
+                                        name="municipality"
+                                        label={state.municipality === "" ? "Change your municipality" : ""}
+                                        fullWidth
+                                        value={state.municipality}
                                         onChange={handleFieldChange}
                                     />
                                 </Grid>
