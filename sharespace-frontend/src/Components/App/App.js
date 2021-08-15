@@ -25,6 +25,7 @@ class App extends Component {
         this.state = {
             // GEOLOCATION DATA
             geolocationData: [],
+            offers: [],
 
             // TEST ITEMS
             homeItems: [
@@ -150,7 +151,11 @@ class App extends Component {
                             <Route path={"/offers"} exact render={() => (
                                 localStorage.getItem("userJwtToken") !== null ?
                                     (
-                                        <Offers userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} />
+                                        <Offers userCity={this.state.userCity}
+                                                userMunicipality={this.state.userMunicipality}
+                                                userId={this.state.userInfo.id}
+                                                offers={this.state.offers}
+                                                onOfferExpire={this.offerExpire} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -160,7 +165,12 @@ class App extends Component {
                             <Route path={"/createOffer"} exact render={() => (
                                 localStorage.getItem("userJwtToken") !== null ?
                                     (
-                                        <CreateOffer userCity={this.state.userCity} userMunicipality={this.state.userMunicipality} userType={this.state.userInfo.type} />
+                                        <CreateOffer userCity={this.state.userCity}
+                                                     userMunicipality={this.state.userMunicipality}
+                                                     userType={this.state.userInfo.type}
+                                                     userId={this.state.userInfo.id}
+                                                     onServerError={this.logout}
+                                                     onOfferCreate={this.offerCreate} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -231,30 +241,40 @@ class App extends Component {
                             loadingScreen: false
                         });
                     });
+
+            this.loadOffers();
         }
         else {
             this.setState({
                 loadingScreen: false
             });
-
         }
 
-        this.loadGeolocationData();
+        // this.loadGeolocationData();
     }
 
     // REPOSITORY FETCH FUNCTIONS
 
-    loadGeolocationData = () => {
-        navigator.geolocation.getCurrentPosition((position) => {
-            GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
-                .then((data) => {
-                    this.setState({
-                        geolocationData: data.data,
-                        userMunicipality: data.data.results[0].address_components[2].long_name,
-                        userCity: data.data.results[0].address_components[3].long_name
-                    });
+    // loadGeolocationData = () => {
+    //     navigator.geolocation.getCurrentPosition((position) => {
+    //         GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
+    //             .then((data) => {
+    //                 this.setState({
+    //                     geolocationData: data.data,
+    //                     userMunicipality: data.data.results[0].address_components[2].long_name,
+    //                     userCity: data.data.results[0].address_components[3].long_name
+    //                 });
+    //             });
+    //     });
+    // }
+
+    loadOffers = () => {
+        ShareSpaceService.fetchOffers(localStorage.getItem("userJwtToken"))
+            .then((data) => {
+                this.setState({
+                    offers: data.data
                 });
-        });
+            });
     }
 
     login = () => {
@@ -266,6 +286,8 @@ class App extends Component {
                     userInfo: data.data
                 });
             });
+
+        this.loadOffers();
     }
 
     logout = () => {
@@ -283,6 +305,26 @@ class App extends Component {
         this.setState({
             userInfo: data
         });
+    }
+
+    offerCreate = () => {
+        this.loadOffers();
+    }
+
+    offerExpire = (offerId) => {
+        ShareSpaceService.deleteOffer(offerId)
+            .then(
+                (data) => {
+                    this.loadOffers();
+                },
+                (err) => {
+                    if(err.response === undefined) {
+                        console.error("Offer not deleted: The ShareSpace server is down.");
+                    }
+                    else {
+                        console.error(err.response.status + ": " + err.response.data.errorMessage);
+                    }
+                });
     }
 
 }

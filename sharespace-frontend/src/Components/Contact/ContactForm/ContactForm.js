@@ -3,13 +3,10 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {CircularProgress, Typography} from "@material-ui/core";
-import {useHistory} from "react-router-dom";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
 import {CheckCircle} from "@material-ui/icons";
 
 const ContactForm = (props) => {
-    const history = useHistory();
-
     const [state, setState] = React.useState({
         subject: "",
         body: "",
@@ -57,8 +54,16 @@ const ContactForm = (props) => {
                         updateInProgress: false
                     });
                 }
-                else {
+                else if(err.response.status === 403) {
                     props.onServerError();
+                }
+                else {
+                    setState({
+                        ...state,
+                        error: true,
+                        errorMessage: err.response.status + ": " + err.response.data.errorMessage,
+                        updateInProgress: false
+                    });
                 }
             });
 

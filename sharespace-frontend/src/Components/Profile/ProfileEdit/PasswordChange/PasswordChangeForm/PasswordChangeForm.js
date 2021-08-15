@@ -64,7 +64,7 @@ const PasswordChangeForm = (props) => {
                 history.push("/login");
             },
             (err) => {
-                if(err.response === undefined || err.response.data.errorMessage !== "Incorrect old password") {
+                if(err.response === undefined || err.response.status !== 400) {
                     props.onServerError();
                 }
                 else {

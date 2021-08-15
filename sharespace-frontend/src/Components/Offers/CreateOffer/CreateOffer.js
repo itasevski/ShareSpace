@@ -2,11 +2,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {LocalOfferTwoTone} from "@material-ui/icons";
 import CreateOfferForm from "../CreateOfferForm/CreateOfferForm";
-import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     typography: {
@@ -55,7 +53,12 @@ const CreateOffer = (props) => {
                     </Typography>
                     <React.Fragment>
                             <React.Fragment>
-                                <CreateOfferForm userCity={props.userCity} userMunicipality={props.userMunicipality} userType={props.userType} />
+                                <CreateOfferForm userCity={props.userCity}
+                                                 userMunicipality={props.userMunicipality}
+                                                 userType={props.userType}
+                                                 userId={props.userId}
+                                                 onServerError={props.onServerError}
+                                                 onOfferCreate={props.onOfferCreate} />
                             </React.Fragment>
                     </React.Fragment>
                 </Paper>

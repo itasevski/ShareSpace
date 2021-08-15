@@ -10,6 +10,7 @@ import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -28,36 +29,39 @@ public class Offer extends BaseEntity {
     private String startDate;
     private String expirationDate;
 
+    private String city;
+    private String municipality;
+
     private int personLimit;
 
     @ManyToOne
     private User creator;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "sharespace_offer_participants",
             joinColumns = @JoinColumn(name = "offer_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> participants;
+    private List<User> participants = new ArrayList<>();
 
-    @ManyToOne
-    private Destination destination;
+    private String destination;
 
-    @ManyToMany
-    @JoinTable(
-            name = "sharespace_offer_rendezvouspoints",
-            joinColumns = @JoinColumn(name = "offer_id"),
-            inverseJoinColumns = @JoinColumn(name = "rendezvouspoint_id"))
-    private List<RendezvousPoint> rendezvousPoints;
+    @ElementCollection
+    @CollectionTable(name="sharespace_offer_rendezvouspoints", joinColumns=@JoinColumn(name="offer_id"))
+    @Column(name="rendezvous_point")
+    private List<String> rendezvousPoints;
 
     public Offer() {}
 
-    public Offer(OfferType offerType, TransportVehicle transportVehicle, String startDate, int personLimit, User creator, Destination destination) {
+    public Offer(OfferType offerType, TransportVehicle transportVehicle, String startDate, String city, String municipality, int personLimit, User creator, String destination, List<String> rendezvousPoints) {
         this.offerType = offerType;
         this.transportVehicle = transportVehicle;
+        this.city = city;
+        this.municipality = municipality;
         this.personLimit = personLimit;
         this.creator = creator;
         this.destination = destination;
+        this.rendezvousPoints = rendezvousPoints;
 
         LocalDateTime now = LocalDateTime.now();
         this.publishedAt = now.format(ShareSpaceApplication.formatter);

@@ -23,8 +23,7 @@ const RendezvousPointsCustomDialog = (props) => {
         });
     }
 
-    const handleFormSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         document.getElementById("rendezvousPoint").value = "";
 
         const rendezvousPoint = state.rendezvousPoint;
@@ -53,49 +52,49 @@ const RendezvousPointsCustomDialog = (props) => {
             {props.isViewDialog === true &&
                 <DialogTitle id="alert-dialog-slide-title">Added rendezvous points</DialogTitle>
             }
-            <form onSubmit={handleFormSubmit}>
-                <DialogContent>
-                    <FormGroup id={props.isViewDialog === true ? "" : "rendezvousPointsForm"}>
-                        {props.isViewDialog === true ?
-                            (
-                                props.rendezvousPoints.length > 0 ?
-                                    props.rendezvousPoints.map((rendezvousPoint, index) => {
-                                        return (
-                                            <Typography variant="subtitle1">
-                                                <IconButton onClick={() => handleRendezvousPointRemove(index)} style={{ marginRight: "5px" }}>
-                                                    <Clear style={{ fontSize: "15px" }}/>
-                                                </IconButton>
-                                                {rendezvousPoint}
-                                            </Typography>
-                                        )
-                                    }) :
-                                    <Typography variant="h6" color="textSecondary">No rendezvous points added.</Typography>
-                            ) :
-                            (
-                                <TextField
-                                    id="rendezvousPoint"
-                                    name="rendezvousPoint"
-                                    label="Type rendezvous point related to your offer..."
-                                    required
-                                    fullWidth
-                                    onChange={handleFieldChange}
-                                />
-                            )}
-                    </FormGroup>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={props.handleDialogClose} color="primary">
-                        Close
-                    </Button>
-                    {props.isViewDialog === false &&
-                        <Button
-                            type="submit"
-                            color="primary">
-                            Submit
-                        </Button>
-                    }
-                </DialogActions>
-            </form>
+            <DialogContent>
+                <FormGroup id={props.isViewDialog === true ? "" : "rendezvousPointsForm"}>
+                    {props.isViewDialog === true ?
+                        (
+                            props.rendezvousPoints.length > 0 ?
+                                props.rendezvousPoints.map((rendezvousPoint, index) => {
+                                    return (
+                                        <Typography variant="subtitle1">
+                                            <IconButton onClick={() => handleRendezvousPointRemove(index)} style={{ marginRight: "5px" }}>
+                                                <Clear style={{ fontSize: "15px" }}/>
+                                            </IconButton>
+                                            {rendezvousPoint}
+                                        </Typography>
+                                    )
+                                }) :
+                                <Typography variant="h6" color="textSecondary">No rendezvous points added.</Typography>
+                        ) :
+                        (
+                            <TextField
+                                id="rendezvousPoint"
+                                name="rendezvousPoint"
+                                label="Type rendezvous point related to your offer..."
+                                required
+                                fullWidth
+                                onChange={handleFieldChange}
+                            />
+                        )}
+                </FormGroup>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleDialogClose} color="primary">
+                    Close
+                </Button>
+                {props.isViewDialog === false &&
+                <Button
+                    type="button"
+                    color="primary"
+                    onClick={handleSubmit}
+                >
+                    Submit
+                </Button>
+                }
+            </DialogActions>
         </Dialog>
     );
 }

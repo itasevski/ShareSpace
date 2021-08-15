@@ -50,7 +50,7 @@ const RegisterForm = (props) => {
             municipality: props.userMunicipality,
             countryCode: document.getElementById("phoneNumber").value
         });
-    }, []);
+    }, [props.userCity]);
 
     const handleFieldChange = (event) => {
         setState({

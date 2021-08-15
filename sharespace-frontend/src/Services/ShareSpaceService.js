@@ -4,7 +4,7 @@ const ShareSpaceService = {
     login: (username, password) => {
         return AxiosShareSpace.post("/login", {
             "username": username,
-            "password": password,
+            "password": password
         });
     },
     register: (firstName, lastName, city, municipality, email, phoneNumber, username, password, confirmPassword, type) => {
@@ -68,6 +68,33 @@ const ShareSpaceService = {
                 Authorization: 'Bearer ' + token,
             }
         });
+    },
+    fetchOffers: (token) => {
+        return AxiosShareSpace.get("/api/offers", {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
+    },
+    createOffer: (token, id, type, transportationVehicle, startDate, city, municipality, personLimit, destination, rendezvousPoints) => {
+        return AxiosShareSpace.post("/api/offers/create", {
+            "type": type,
+            "transportationVehicle": transportationVehicle,
+            "startDate": startDate,
+            "city": city,
+            "municipality": municipality,
+            "personLimit": personLimit,
+            "userId": id,
+            "destination": destination,
+            "rendezvousPoints": rendezvousPoints
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
+    },
+    deleteOffer: (offerId) => {
+        return AxiosShareSpace.get(`/api/offers/delete/${offerId}`);
     }
 }
 

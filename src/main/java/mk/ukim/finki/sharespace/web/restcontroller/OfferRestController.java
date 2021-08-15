@@ -7,12 +7,20 @@ import mk.ukim.finki.sharespace.service.OfferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/offers")
 public class OfferRestController {
 
     private final OfferService offerService;
+
+    @GetMapping
+    public List<Offer> getAll() {
+        return this.offerService.getAll();
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Offer> create(@RequestBody OfferDto offerDto) {
@@ -34,7 +42,7 @@ public class OfferRestController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @DeleteMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
         this.offerService.delete(id);
         return ResponseEntity.ok("Successfully deleted offer with id " + id);

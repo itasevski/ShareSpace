@@ -4,14 +4,19 @@ import lombok.Data;
 import mk.ukim.finki.sharespace.model.enumeration.OfferType;
 import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 
+import java.util.List;
+
 @Data
 public class OfferDto {
 
-    private OfferType offerType;
-    private TransportVehicle transportVehicle;
+    private OfferType type;
+    private TransportVehicle transportationVehicle;
     private String startDate;
+    private String city;
+    private String municipality;
     private int personLimit;
-    private String creatorId;
-    private String destinationId;
+    private String userId;
+    private String destination;
+    private List<String> rendezvousPoints;
 
 }

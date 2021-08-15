@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import "./Offers.css";
-import {ArrowDownward, ArrowUpward, Clear, VerifiedUserRounded} from "@material-ui/icons";
+import {ArrowDownward, ArrowUpward, Clear} from "@material-ui/icons";
 import Box from "@material-ui/core/Box";
 import FiltersCustomDialog from "../../Utilities/FiltersCustomDialog/FiltersCustomDialog";
 import {Link} from "react-router-dom";
@@ -19,8 +19,33 @@ class Offers extends Component {
         super(props);
         this.state = {
             dialogOpen: false,
-            filters: {},
-            sortOptions: [],
+            filters: {
+                myLocation: true,
+                passengerOffers: false,
+                driverOffers: false,
+                createdToday: false,
+                createdYesterday: false,
+                personLimitOneFive: false,
+                personLimitSixTen: false
+            },
+            sortOptions: [
+                {
+                    name: "Publisher",
+                    value: "publisher"
+                },
+                {
+                    name: "Date and time",
+                    value: "dateAndTime"
+                },
+                {
+                    name: "Person limit",
+                    value: "personLimit"
+                },
+                {
+                    name: "Destination",
+                    value: "destination"
+                }
+            ],
             sortCriteria: "publisher"
         }
     }
@@ -197,7 +222,11 @@ class Offers extends Component {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        <Offer />
+                                        {this.props.offers.map((offer) => {
+                                            return (
+                                                <Offer offer={offer} onOfferExpire={this.props.onOfferExpire} userId={this.props.userId} />
+                                            );
+                                        })}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
@@ -206,38 +235,6 @@ class Offers extends Component {
                 </Grid>
             </div>
         )
-    }
-
-    componentDidMount() {
-        this.setState({
-            filters: {
-                myLocation: true,
-                passengerOffers: false,
-                driverOffers: false,
-                createdToday: false,
-                createdYesterday: false,
-                personLimitOneFive: false,
-                personLimitSixTen: false
-            },
-            sortOptions: [
-                {
-                    name: "Publisher",
-                    value: "publisher"
-                },
-                {
-                    name: "Date and time",
-                    value: "dateAndTime"
-                },
-                {
-                    name: "Person limit",
-                    value: "personLimit"
-                },
-                {
-                    name: "Destination",
-                    value: "destination"
-                }
-            ]
-        });
     }
 
     handleFilterClear(data) {
