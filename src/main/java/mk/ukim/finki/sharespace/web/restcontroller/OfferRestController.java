@@ -3,6 +3,7 @@ package mk.ukim.finki.sharespace.web.restcontroller;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.Offer;
 import mk.ukim.finki.sharespace.model.dto.OfferDto;
+import mk.ukim.finki.sharespace.model.dto.SortDto;
 import mk.ukim.finki.sharespace.service.OfferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,16 @@ public class OfferRestController {
     private final OfferService offerService;
 
     @GetMapping
-    public List<Offer> getAll() {
+    public List<Offer> getAll(@RequestParam(required = false) String queryString) {
+        if(queryString != null && !queryString.isEmpty() && !queryString.isBlank()) {
+            return this.offerService.getByQueryString(queryString);
+        }
         return this.offerService.getAll();
+    }
+
+    @PostMapping("/sorted")
+    public List<Offer> getSorted(@RequestBody SortDto sortDto) {
+        return this.offerService.getBySortCriteria(sortDto);
     }
 
     @PostMapping("/create")

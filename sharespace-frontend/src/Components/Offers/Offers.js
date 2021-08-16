@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {
-    Button,
+    Button, CircularProgress,
     Grid, IconButton, MenuItem, Select,
     Table, TableBody, TableCell,
     TableContainer, TableHead,
@@ -8,11 +8,13 @@ import {
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import "./Offers.css";
-import {ArrowDownward, ArrowUpward, Clear} from "@material-ui/icons";
+import {ArrowBackIos, ArrowDownward, ArrowForwardIos, ArrowUpward, Clear, Error, Info} from "@material-ui/icons";
 import Box from "@material-ui/core/Box";
 import FiltersCustomDialog from "../../Utilities/FiltersCustomDialog/FiltersCustomDialog";
 import {Link} from "react-router-dom";
 import Offer from "./Offer/Offer";
+import {Pagination} from "@material-ui/lab";
+import ShareSpaceService from "../../Services/ShareSpaceService";
 
 class Offers extends Component {
     constructor(props) {
@@ -46,7 +48,16 @@ class Offers extends Component {
                     value: "destination"
                 }
             ],
-            sortCriteria: "publisher"
+            sortCriteria: "publisher",
+            searchQueryString: "",
+
+            error: false,
+
+            page: 0,
+            size: 2,
+
+            sortInProgress: false,
+            searchInProgress: false
         }
     }
 
@@ -75,7 +86,121 @@ class Offers extends Component {
         });
     }
 
+    handlePreviousPageClick = () => {
+        const pageIndex = this.state.page - 1;
+
+        this.setState({
+            page: pageIndex
+        });
+    }
+
+    handlePageChange = (event) => {
+        const pageIndex = parseInt(event.target.textContent) - 1;
+
+        this.setState({
+            page: pageIndex
+        });
+    }
+
+    handleNextPageClick = () => {
+        const pageIndex = this.state.page + 1;
+
+        this.setState({
+            page: pageIndex
+        });
+    }
+
+    handleFieldChange = (event) => {
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    }
+
+    handleOffersAscendingSort = () => {
+        const sortCriteria = this.state.sortCriteria;
+
+        this.sortOffers(sortCriteria, "true");
+    }
+
+    handleOffersDescendingSort = () => {
+        const sortCriteria = this.state.sortCriteria;
+
+        this.sortOffers(sortCriteria, "false");
+    }
+
+    handleOffersSearch = () => {
+        const searchQueryString = this.state.searchQueryString;
+
+        this.searchOffers(searchQueryString);
+    }
+
+    sortOffers = (criteria, isAscending) => {
+        ShareSpaceService.fetchSortedOffers(
+            localStorage.getItem("userJwtToken"),
+            criteria, isAscending
+        ).then(
+            (data) => {
+                this.setState({
+                    error: false,
+                    sortInProgress: false
+                });
+                this.props.onOffersSort(data.data);
+            },
+            (err) => {
+                if(err.response.status === 403) {
+                    this.props.onServerError();
+                }
+                else {
+                    this.setState({
+                        error: true,
+                        sortInProgress: false
+                    });
+                    this.props.onOffersSort([]);
+                }
+            });
+
+        this.setState({
+           sortInProgress: true
+        });
+    }
+
+    searchOffers = (queryString) => {
+        ShareSpaceService.fetchOffersByQueryString(
+            localStorage.getItem("userJwtToken"),
+            queryString
+        ).then(
+            (data) => {
+                this.setState({
+                    error: false,
+                    searchInProgress: false
+                });
+                this.props.onOffersSearch(data.data);
+            },
+            (err) => {
+                if(err.response.status === 403) {
+                    this.props.onServerError();
+                }
+                else {
+                    this.setState({
+                        error: true,
+                        searchInProgress: false
+                    });
+                    this.props.onOffersSearch([]);
+                }
+            });
+
+        this.setState({
+            searchInProgress: true
+        });
+    }
+
     render() {
+        const offset = this.state.page * this.state.size;
+        const nextPageOffset = offset + this.state.size;
+        const pageCount = Math.ceil(this.props.offers.length / this.state.size);
+
+        const offers = this.getOffersPage(offset, nextPageOffset);
+
         return (
             <div id="offersContainer">
                 <Grid container>
@@ -179,20 +304,23 @@ class Offers extends Component {
                                         {this.state.sortOptions.map((sortOption) => {
                                             return (
                                                 <MenuItem value={sortOption.value}>{sortOption.name}</MenuItem>
-                                            )
+                                            );
                                         })}
                                     </Select>
                                     <Box ml={1}>
                                         <Tooltip title="Ascending">
-                                            <IconButton>
+                                            <IconButton onClick={this.handleOffersAscendingSort}>
                                                 <ArrowUpward style={{ fontSize: "18px" }} />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Descending">
-                                            <IconButton>
+                                            <IconButton onClick={this.handleOffersDescendingSort}>
                                                 <ArrowDownward style={{ fontSize: "18px" }} />
                                             </IconButton>
                                         </Tooltip>
+                                        {this.state.sortInProgress === true &&
+                                        <CircularProgress size={22} style={{ marginLeft: "5px" }} />
+                                        }
                                     </Box>
                                 </Grid>
                             </Box>
@@ -200,38 +328,80 @@ class Offers extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <Grid container justifyContent="flex-end">
-                            <TextField placeholder="Enter keywords..." style={{ marginRight: "15px" }} />
-                            <Button variant="outlined" color="primary">Search</Button>
+                            <TextField
+                                id="searchQueryString"
+                                name="searchQueryString"
+                                placeholder="Enter keywords..."
+                                style={{ marginRight: "15px" }}
+                                onChange={this.handleFieldChange} />
+                            <Button variant="outlined" color="primary" onClick={this.handleOffersSearch}>
+                                Search
+                                {this.state.searchInProgress === true &&
+                                <CircularProgress style={{ marginLeft: "10px" }} size={15} />
+                                }
+                            </Button>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} style={{ marginTop: "30px" }}>
                         <Grid container justifyContent="center">
-                            <TableContainer style={{ width: "95%" }}>
-                                <Table aria-label="a dense table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Publisher</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Offer type</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Date and time</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Person limit</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Rendezvous points</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Destination</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Vehicle</TableCell>
-                                            <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>People</TableCell>
-                                            <TableCell> </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {this.props.offers.map((offer) => {
-                                            return (
-                                                <Offer offer={offer} onOfferExpire={this.props.onOfferExpire} userId={this.props.userId} />
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                            {this.props.offerFetchError === true || this.state.error === true &&
+                                <Grid item xs={12}>
+                                    <Grid container justifyContent="center">
+                                        <Typography variant="subtitle1" color="secondary">
+                                            <Error color="secondary" />&nbsp;
+                                            Error fetching offers: The ShareSpace server is down.
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            }
+                            {this.props.offers.length === 0 ?
+                                (
+                                    <Grid item xs={12}>
+                                        <Grid container justifyContent="center">
+                                            <Typography variant="subtitle1" style={{ color: "orange", fontSize: "25px", marginTop: "100px" }}>
+                                                <Info style={{ color: "orange", fontSize: "30px" }}/>&nbsp;
+                                                No offers are available for you at the moment.
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                ) :
+                                (
+                                    <TableContainer style={{ width: "95%" }}>
+                                        <Table aria-label="a dense table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Publisher</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Offer type</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Date and time</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Person limit</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Rendezvous points</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Destination</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Vehicle</TableCell>
+                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>People</TableCell>
+                                                    <TableCell> </TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {offers}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                )}
                         </Grid>
                     </Grid>
+                    {this.props.offers.length !== 0 &&
+                    <Grid item xs={12} style={{ marginTop: "50px" }}>
+                        <Grid container justifyContent="center">
+                            <IconButton onClick={this.handlePreviousPageClick} disabled={this.state.page === 0}>
+                                <ArrowBackIos style={{ fontSize: "11px" }} />
+                            </IconButton>
+                            <Pagination page={this.state.page + 1} count={pageCount} color="primary" onChange={this.handlePageChange} hidePrevButton hideNextButton />
+                            <IconButton onClick={this.handleNextPageClick} disabled={this.state.page === pageCount - 1}>
+                                <ArrowForwardIos style={{ fontSize: "11px" }} />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                    }
                 </Grid>
             </div>
         )
@@ -285,6 +455,14 @@ class Offers extends Component {
             default:
                 return;
         }
+    }
+
+    getOffersPage = (offset, nextPageOffset) => {
+        return this.props.offers.map((offer, index) => {
+            return (
+                <Offer offer={offer} onOfferExpire={this.props.onOfferExpire} userId={this.props.userId} />
+            );
+        }).filter((product, index) => (index >= offset && index < nextPageOffset));
     }
 
 }

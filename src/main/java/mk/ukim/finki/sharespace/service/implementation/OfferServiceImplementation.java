@@ -4,14 +4,20 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.Offer;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.dto.OfferDto;
+import mk.ukim.finki.sharespace.model.dto.SortDto;
+import mk.ukim.finki.sharespace.model.enumeration.OfferType;
+import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 import mk.ukim.finki.sharespace.model.exception.OfferNotFoundException;
 import mk.ukim.finki.sharespace.repository.OfferRepository;
 import mk.ukim.finki.sharespace.service.OfferService;
 import mk.ukim.finki.sharespace.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +29,56 @@ public class OfferServiceImplementation implements OfferService {
     @Override
     public List<Offer> getAll() {
         return this.offerRepository.findAll();
+    }
+
+    @Override
+    public List<Offer> getBySortCriteria(SortDto sortDto) {
+        if(sortDto.getCriteria().equals("publisher") && sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byCreatorOrIdComparatorAscending).collect(Collectors.toList());
+        }
+        else if(sortDto.getCriteria().equals("publisher") && !sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byCreatorOrIdComparatorDescending).collect(Collectors.toList());
+        }
+        else if(sortDto.getCriteria().equals("dateAndTime") && sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byDateAndTimeOrIdComparatorAscending).collect(Collectors.toList());
+        }
+        else if(sortDto.getCriteria().equals("dateAndTime") && !sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byDateAndTimeOrIdComparatorDescending).collect(Collectors.toList());
+        }
+        else if(sortDto.getCriteria().equals("personLimit") && sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byPersonLimitOrIdComparatorAscending).collect(Collectors.toList());
+        }
+        else if(sortDto.getCriteria().equals("personLimit") && !sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byPersonLimitOrIdComparatorDescending).collect(Collectors.toList());
+        }
+        else if(sortDto.getCriteria().equals("destination") && sortDto.isAscending()) {
+            return getAll().stream().sorted(Offer.byDestinationOrIdComparatorAscending).collect(Collectors.toList());
+        }
+        else {
+            return getAll().stream().sorted(Offer.byDestinationOrIdComparatorDescending).collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public List<Offer> getByQueryString(String queryString) {
+        try {
+            int queryInteger = Integer.parseInt(queryString);
+            return this.offerRepository.findByPersonLimitOrStartDateContaining(queryInteger, queryString);
+        }
+        catch (NumberFormatException ignored) {
+
+        }
+
+        if(queryString.equalsIgnoreCase("taxi") || queryString.equalsIgnoreCase("bus") ||
+                queryString.equalsIgnoreCase("ferry") || queryString.equalsIgnoreCase("subway")) {
+            ArrayList<Offer> list = (ArrayList<Offer>) this.offerRepository.findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCaseOrTransportVehicle
+                    (queryString, queryString, queryString, queryString, queryString, queryString, TransportVehicle.valueOf(queryString.toUpperCase()));
+            System.out.println(list.size());
+            return list;
+        }
+
+        return this.offerRepository.findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCase
+                (queryString, queryString, queryString, queryString, queryString, queryString);
     }
 
     @Override

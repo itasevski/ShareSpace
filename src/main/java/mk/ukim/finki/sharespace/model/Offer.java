@@ -11,13 +11,40 @@ import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "sharespace_offer")
 @EqualsAndHashCode(callSuper = true)
 public class Offer extends BaseEntity {
+
+    @Transient
+    public static Comparator<Offer> byCreatorOrIdComparatorAscending = Comparator.comparing(Offer::getCreatorName).thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byCreatorOrIdComparatorDescending = Comparator.comparing(Offer::getCreatorName).reversed().thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byDateAndTimeOrIdComparatorAscending = Comparator.comparing(Offer::getStartDateAsDate).thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byDateAndTimeOrIdComparatorDescending = Comparator.comparing(Offer::getStartDateAsDate).reversed().thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byPersonLimitOrIdComparatorAscending = Comparator.comparing(Offer::getPersonLimit).thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byPersonLimitOrIdComparatorDescending = Comparator.comparing(Offer::getPersonLimit).reversed().thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byDestinationOrIdComparatorAscending = Comparator.comparing(Offer::getDestination).thenComparing(Offer::getId);
+
+    @Transient
+    public static Comparator<Offer> byDestinationOrIdComparatorDescending = Comparator.comparing(Offer::getDestination).reversed().thenComparing(Offer::getId);
+
 
     @Enumerated(EnumType.STRING)
     private OfferType offerType;
@@ -49,11 +76,11 @@ public class Offer extends BaseEntity {
     @ElementCollection
     @CollectionTable(name="sharespace_offer_rendezvouspoints", joinColumns=@JoinColumn(name="offer_id"))
     @Column(name="rendezvous_point")
-    private List<String> rendezvousPoints;
+    private Set<String> rendezvousPoints;
 
     public Offer() {}
 
-    public Offer(OfferType offerType, TransportVehicle transportVehicle, String startDate, String city, String municipality, int personLimit, User creator, String destination, List<String> rendezvousPoints) {
+    public Offer(OfferType offerType, TransportVehicle transportVehicle, String startDate, String city, String municipality, int personLimit, User creator, String destination, Set<String> rendezvousPoints) {
         this.offerType = offerType;
         this.transportVehicle = transportVehicle;
         this.city = city;
@@ -71,6 +98,14 @@ public class Offer extends BaseEntity {
 
         LocalDateTime expirationDateTime = LocalDateTime.parse(startDate, ShareSpaceApplication.formatter).minusMinutes(30);
         this.expirationDate = expirationDateTime.format(ShareSpaceApplication.formatter);
+    }
+
+    public String getCreatorName() {
+        return this.creator.getFirstName() + " " + this.creator.getLastName();
+    }
+
+    public LocalDateTime getStartDateAsDate() {
+        return LocalDateTime.parse(this.getStartDate(), ShareSpaceApplication.formatter);
     }
 
 }

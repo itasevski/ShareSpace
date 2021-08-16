@@ -76,6 +76,23 @@ const ShareSpaceService = {
             }
         });
     },
+    fetchSortedOffers: (token, criteria, isAscending) => {
+        return AxiosShareSpace.post("/api/offers/sorted", {
+            "criteria": criteria,
+            "isAscending": isAscending
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
+    },
+    fetchOffersByQueryString: (token, queryString) => {
+        return AxiosShareSpace.get(`/api/offers?queryString=${queryString}`, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
+    },
     createOffer: (token, id, type, transportationVehicle, startDate, city, municipality, personLimit, destination, rendezvousPoints) => {
         return AxiosShareSpace.post("/api/offers/create", {
             "type": type,

@@ -29,6 +29,7 @@ public abstract class User extends BaseEntity implements UserDetails {
     private String password;
     private String firstName;
     private String lastName;
+    private String fullName;
     private String city;
     private String municipality;
     private String phoneNumber;
@@ -58,6 +59,7 @@ public abstract class User extends BaseEntity implements UserDetails {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.fullName = firstName + " " + lastName;
         this.city = city;
         this.municipality = municipality;
         this.phoneNumber = phoneNumber;

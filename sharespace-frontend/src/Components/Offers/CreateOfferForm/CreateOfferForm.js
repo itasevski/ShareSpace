@@ -462,7 +462,7 @@ const CreateOfferForm = (props) => {
             isDateValid: isDateValid
         });
 
-        return (isRendezvousPointFieldValid === true && isDateValid === true);
+        return (isRendezvousPointFieldValid === true && isPersonLimitValid === true && isDateValid === true);
     }
 
 }

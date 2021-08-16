@@ -26,6 +26,7 @@ class App extends Component {
             // GEOLOCATION DATA
             geolocationData: [],
             offers: [],
+            offerFetchError: false,
 
             // TEST ITEMS
             homeItems: [
@@ -155,7 +156,11 @@ class App extends Component {
                                                 userMunicipality={this.state.userMunicipality}
                                                 userId={this.state.userInfo.id}
                                                 offers={this.state.offers}
-                                                onOfferExpire={this.offerExpire} />
+                                                offerFetchError={this.state.offerFetchError}
+                                                onServerError={this.logout}
+                                                onOfferExpire={this.loadOffers}
+                                                onOffersSort={this.offersSort}
+                                                onOffersSearch={this.offersSearch} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -170,7 +175,7 @@ class App extends Component {
                                                      userType={this.state.userInfo.type}
                                                      userId={this.state.userInfo.id}
                                                      onServerError={this.logout}
-                                                     onOfferCreate={this.offerCreate} />
+                                                     onOfferCreate={this.loadOffers} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -205,7 +210,7 @@ class App extends Component {
                             <Route path={"/profile/edit/changePassword"} exact render={() => (
                                 localStorage.getItem("userJwtToken") !== null ?
                                     (
-                                        <PasswordChange userId={this.state.userInfo.id} onChangePassword={this.changePassword} onServerError={this.logout} />
+                                        <PasswordChange userId={this.state.userInfo.id} onChangePassword={this.logout} onServerError={this.logout} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -270,11 +275,18 @@ class App extends Component {
 
     loadOffers = () => {
         ShareSpaceService.fetchOffers(localStorage.getItem("userJwtToken"))
-            .then((data) => {
-                this.setState({
-                    offers: data.data
+            .then(
+                (data) => {
+                    this.setState({
+                        offers: data.data
+                    });
+                },
+                (err) => {
+                    this.setState({
+                        offerFetchError: true,
+                        offers: []
+                    });
                 });
-            });
     }
 
     login = () => {
@@ -293,12 +305,9 @@ class App extends Component {
     logout = () => {
         localStorage.removeItem("userJwtToken");
         this.setState({
-            userInfo: {}
+            userInfo: {},
+            offers: []
         });
-    }
-
-    changePassword = () => {
-        this.logout();
     }
 
     profileEdit = (data) => {
@@ -307,24 +316,16 @@ class App extends Component {
         });
     }
 
-    offerCreate = () => {
-        this.loadOffers();
+    offersSort = (data) => {
+        this.setState({
+            offers: data
+        });
     }
 
-    offerExpire = (offerId) => {
-        ShareSpaceService.deleteOffer(offerId)
-            .then(
-                (data) => {
-                    this.loadOffers();
-                },
-                (err) => {
-                    if(err.response === undefined) {
-                        console.error("Offer not deleted: The ShareSpace server is down.");
-                    }
-                    else {
-                        console.error(err.response.status + ": " + err.response.data.errorMessage);
-                    }
-                });
+    offersSearch = (data) => {
+        this.setState({
+            offers: data
+        });
     }
 
 }

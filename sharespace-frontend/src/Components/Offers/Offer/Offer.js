@@ -3,11 +3,28 @@ import {Button, Grid, TableCell, TableRow} from "@material-ui/core";
 import {VerifiedUserRounded} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import {formatDistance, isBefore} from "date-fns";
+import ShareSpaceService from "../../../Services/ShareSpaceService";
 
 const Offer = (props) => {
 
     const reformatDate = (date) => {
         return date.substr(3,3) + date.substr(0,2) + date.substr(5);
+    }
+
+    const deleteOffer = (offerId) => {
+        ShareSpaceService.deleteOffer(offerId)
+            .then(
+                (data) => {
+                    props.onOfferExpire();
+                },
+                (err) => {
+                    if(err.response === undefined) {
+                        console.error("Offer not deleted: The ShareSpace server is down.");
+                    }
+                    else {
+                        console.error(err.response.status + ": " + err.response.data.errorMessage);
+                    }
+                });
     }
 
     var now = new Date();
@@ -16,7 +33,10 @@ const Offer = (props) => {
     var result;
 
     if(isBefore(expirationDate, now)) {
-        props.onOfferExpire(props.offer.id);
+        deleteOffer(props.offer.id);
+        return (
+            <span></span>
+        );
     }
     else {
         result = formatDistance(expirationDate, now, {
@@ -73,7 +93,7 @@ const Offer = (props) => {
                         <Typography variant="subtitle1">Personal vehicle</Typography>
                     ) :
                     (
-                        <Typography variant="subtitle1">{props.offer.transportationVehicle}</Typography>
+                        <Typography variant="subtitle1">{props.offer.transportVehicle}</Typography>
                     )}
             </TableCell>
             <TableCell>

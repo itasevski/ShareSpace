@@ -5,6 +5,7 @@ import mk.ukim.finki.sharespace.model.enumeration.OfferType;
 import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class OfferDto {
@@ -17,6 +18,6 @@ public class OfferDto {
     private int personLimit;
     private String userId;
     private String destination;
-    private List<String> rendezvousPoints;
+    private Set<String> rendezvousPoints;
 
 }
