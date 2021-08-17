@@ -161,7 +161,8 @@ class App extends Component {
                                                 onOfferExpire={this.loadOffers}
                                                 onOffersSort={this.setOffersData}
                                                 onOffersSearch={this.setOffersData}
-                                                onOffersFilter={this.setOffersData} />
+                                                onOffersFilter={this.setOffersData}
+                                                item={this.state.profileItems[0]} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -189,7 +190,8 @@ class App extends Component {
                                         <Profile item={this.state.profileItems[0]}
                                                  userInfo={this.state.userInfo}
                                                  userCity={this.state.userCity}
-                                                 userMunicipality={this.state.userMunicipality} />
+                                                 userMunicipality={this.state.userMunicipality}
+                                                 userId={this.state.userInfo.id} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />

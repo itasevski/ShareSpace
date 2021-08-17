@@ -1,11 +1,30 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Button, Grid, TableCell, TableRow} from "@material-ui/core";
 import {VerifiedUserRounded} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import {formatDistance, isBefore} from "date-fns";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
+import Profile from "../../Profile/Profile";
 
 const Offer = (props) => {
+
+    const handleNameClick = () => {
+        const userId = props.offer.creator.id;
+
+        ShareSpaceService.fetchCurrentUserById(
+            localStorage.getItem("userJwtToken"),
+            userId
+        ).then(
+            (data) => {
+                props.onProfileView(data.data);
+            },
+            (err) => {
+                if(err.response.status === 403) {
+                    props.onServerError();
+                }
+            }
+        );
+    }
 
     const reformatDate = (date) => {
         return date.substr(3,3) + date.substr(0,2) + date.substr(5);
@@ -55,7 +74,11 @@ const Offer = (props) => {
                     </Grid>
                     <Grid item xs={8}>
                         <Grid container>
-                            <Typography variant="h6">{props.offer.creator.firstName} {props.offer.creator.lastName}</Typography>
+                            <Typography variant="h6">
+                                <Button style={{ fontSize: "20px" }} onClick={handleNameClick}>
+                                    {props.offer.creator.firstName} {props.offer.creator.lastName}
+                                </Button>
+                            </Typography>
                         </Grid>
                         <Typography variant="subtitle2">Published at: {props.offer.publishedAt}</Typography>
                         <Typography variant="subtitle2">Offer environment: {props.offer.city}, {props.offer.municipality}</Typography>
@@ -106,12 +129,12 @@ const Offer = (props) => {
             <TableCell align="right">
                 {props.offer.creator.id !== props.userId ?
                     props.offer.participants.length === props.offer.personLimit ?
-                    (
-                        <Button variant="contained" disabled>FULL</Button>
-                    ) :
-                    (
-                        <Button variant="contained" style={{ backgroundColor: "green", color: "white" }}>JOIN</Button>
-                    ) :
+                        (
+                            <Button variant="contained" disabled>FULL</Button>
+                        ) :
+                        (
+                            <Button variant="contained" style={{ backgroundColor: "green", color: "white" }}>JOIN</Button>
+                        ) :
                     (
                         <span></span>
                     )
@@ -120,6 +143,7 @@ const Offer = (props) => {
             </TableCell>
         </TableRow>
     );
+
 }
 
 export default Offer;

@@ -1,10 +1,18 @@
 import React from "react";
-import {Grid, Typography} from "@material-ui/core";
-import {Facebook, Instagram, Star, StarBorderOutlined, Twitter, VerifiedUserRounded} from "@material-ui/icons";
+import {Grid, IconButton, Typography} from "@material-ui/core";
+import {
+    ArrowBackIos,
+    Facebook,
+    Instagram,
+    Star,
+    StarBorderOutlined,
+    Twitter,
+    VerifiedUserRounded
+} from "@material-ui/icons";
 import "./Profile.css";
 import ProgressCircle from "../../Utilities/CircularProgress/ProgressCircle/ProgressCircle";
 import Button from "@material-ui/core/Button";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 function stars(number) {
     const items = [];
@@ -20,13 +28,23 @@ function stars(number) {
 }
 
 const Profile = (props) => {
-
     const items = stars(props.userInfo.rating);
+
+    const handleBackClick = () => {
+        window.location.reload();
+    }
 
     return (
         <div id="profileContainer">
             <Grid container>
                 <Grid item xs={5}>
+                    {props.userInfo.id !== props.userId &&
+                    <Grid container justifyContent="flex-start">
+                        <IconButton style={{marginLeft: "50px"}} onClick={handleBackClick}>
+                            <ArrowBackIos style={{fontSize: "40px"}}/>
+                        </IconButton>
+                    </Grid>
+                    }
                     <Grid container justifyContent="center">
                         <VerifiedUserRounded style={{ fontSize: "300px" }} />
                     </Grid>
@@ -57,11 +75,13 @@ const Profile = (props) => {
                             Home location: {props.userInfo.city}, {props.userInfo.municipality}
                         </Typography>
                     </Grid>
+                    {props.userInfo.id === props.userId &&
                     <Grid container justifyContent="center" className="userInfo">
                         <Typography variant="subtitle2">
                             Current location: {props.userCity}, {props.userMunicipality}
                         </Typography>
                     </Grid>
+                    }
                     <Grid container justifyContent="center" className="userInfo">
                         <Typography variant="subtitle2">
                             {props.userInfo.email}
@@ -84,13 +104,15 @@ const Profile = (props) => {
                     <Grid container justifyContent="center">
                         {items}
                     </Grid>
-                    <Grid container justifyContent="center" style={{ paddingTop: "20px" }}>
-                            <Link to="/profile/edit" style={{ textDecoration: "none", color: "#3f51b5" }}>
-                                <Button type="button" color="primary" variant="outlined">
-                                    Edit profile
-                                </Button>
-                            </Link>
+                    {props.userInfo.id === props.userId &&
+                    <Grid container justifyContent="center" style={{paddingTop: "20px"}}>
+                        <Link to="/profile/edit" style={{textDecoration: "none", color: "#3f51b5"}}>
+                            <Button type="button" color="primary" variant="outlined">
+                                Edit profile
+                            </Button>
+                        </Link>
                     </Grid>
+                    }
                 </Grid>
                 <Grid item xs={6} style={{ marginTop: "100px" }}>
                     {props.userInfo.bio !== null &&

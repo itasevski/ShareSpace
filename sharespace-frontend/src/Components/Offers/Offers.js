@@ -15,6 +15,7 @@ import {Link} from "react-router-dom";
 import Offer from "./Offer/Offer";
 import {Pagination} from "@material-ui/lab";
 import ShareSpaceService from "../../Services/ShareSpaceService";
+import Profile from "../Profile/Profile";
 
 class Offers extends Component {
     constructor(props) {
@@ -59,7 +60,9 @@ class Offers extends Component {
 
             sortInProgress: false,
             searchInProgress: false,
-            filterInProgress: false
+            filterInProgress: false,
+
+            profileInfo: []
         }
     }
 
@@ -116,6 +119,12 @@ class Offers extends Component {
     handleFieldChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
+        });
+    }
+
+    handleProfileView = (profileInfo) => {
+        this.setState({
+            profileInfo: profileInfo
         });
     }
 
@@ -250,218 +259,229 @@ class Offers extends Component {
         const offers = this.getOffersPage(offset, nextPageOffset);
 
         return (
-            <div id="offersContainer">
-                <Grid container>
-                    <Grid item xs={6}>
-                        <Grid container justifyContent="center" style={{ marginBottom: "10px" }}>
-                            <Typography variant="subtitle1">Your location: {this.props.userCity}, {this.props.userMunicipality}</Typography>
-                        </Grid>
-                        <Grid container justifyContent="center">
-                            <Link to="/createOffer" style={{ textDecoration: "none", color: "white" }}>
-                                <Button color="primary" variant="contained">
-                                    Create offer
-                                </Button>
-                            </Link>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Grid container justifyContent="center">
-                            <Box mr={4}>
-                                <Button variant="contained" style={{ backgroundColor: "green", color: "white" }} onClick={this.handleDialogOpen}>
-                                    Apply filters
-                                </Button><br />
-                                {this.state.filterInProgress === true &&
-                                <CircularProgress style={{ marginLeft: "60px", marginTop: "15px" }} size={25} />
-                                }
-                                <FiltersCustomDialog dialogOpen={this.state.dialogOpen}
-                                                     handleDialogOpen={this.handleDialogOpen}
-                                                     handleDialogClose={this.handleDialogClose}
-                                                     appliedFiltersHandler={this.handleAppliedFilters} />
-                            </Box>
-                            <Box>
-                                <Typography variant="subtitle1">Active filters:</Typography>
-                                {this.state.filters.myLocation === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("myLocation")} style={{ marginRight: "5px" }}>
-                                        <Clear style={{ fontSize: "15px" }}/>
-                                    </IconButton>
-                                    My Location
-                                </Typography>
-                                }
-                                {this.state.filters.myOffers === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("myOffers")} style={{ marginRight: "5px" }}>
-                                        <Clear style={{ fontSize: "15px" }}/>
-                                    </IconButton>
-                                    My offers
-                                </Typography>
-                                }
-                                {this.state.filters.passengerOffers === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("passengerOffers")}>
-                                        <Clear style={{ fontSize: "15px" }} />
-                                    </IconButton>
-                                    Passenger offers
-                                </Typography>
-                                }
-                                {this.state.filters.driverOffers === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("driverOffers")}>
-                                        <Clear style={{ fontSize: "15px" }} />
-                                    </IconButton>
-                                    Driver offers
-                                </Typography>
-                                }
-                                {this.state.filters.createdToday === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("createdToday")}>
-                                        <Clear style={{ fontSize: "15px" }} />
-                                    </IconButton>
-                                    Created today
-                                </Typography>
-                                }
-                                {this.state.filters.createdYesterday === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("createdYesterday")}>
-                                        <Clear style={{ fontSize: "15px" }} />
-                                    </IconButton>
-                                    Created yesterday
-                                </Typography>
-                                }
-                                {this.state.filters.personLimitOneFive === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("personLimitOneFive")}>
-                                        <Clear style={{ fontSize: "15px" }} />
-                                    </IconButton>
-                                    Person limit (1-5)
-                                </Typography>
-                                }
-                                {this.state.filters.personLimitSixTen === true &&
-                                <Typography variant="subtitle2">
-                                    <IconButton onClick={() => this.handleFilterClear("personLimitSixTen")}>
-                                        <Clear style={{ fontSize: "15px" }} />
-                                    </IconButton>
-                                    Person limit (6-10)
-                                </Typography>
-                                }
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    <hr style={{ width: "80%", color: "gray", marginTop: "20px", marginBottom: "30px" }}/>
-                    <Grid item xs={3}>
-                        <Grid container justifyContent="center">
-                            <Box>
-                                <Typography variant="subtitle1">Sort by:</Typography>
-                                <Grid container>
-                                    <Select
-                                        id="sortCriteria"
-                                        name="sortCriteria"
-                                        value={this.state.sortCriteria}
-                                        onChange={this.handleSortCriteriaChange}
-                                        style={{ width: "150px" }}
-                                    >
-                                        {this.state.sortOptions.map((sortOption) => {
-                                            return (
-                                                <MenuItem value={sortOption.value}>{sortOption.name}</MenuItem>
-                                            );
-                                        })}
-                                    </Select>
-                                    <Box ml={1}>
-                                        <Tooltip title="Ascending">
-                                            <IconButton onClick={this.handleOffersAscendingSort}>
-                                                <ArrowUpward style={{ fontSize: "18px" }} />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Descending">
-                                            <IconButton onClick={this.handleOffersDescendingSort}>
-                                                <ArrowDownward style={{ fontSize: "18px" }} />
-                                            </IconButton>
-                                        </Tooltip>
-                                        {this.state.sortInProgress === true &&
-                                        <CircularProgress size={22} style={{ marginLeft: "5px" }} />
-                                        }
-                                    </Box>
-                                </Grid>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <Grid container justifyContent="flex-end">
-                            <TextField
-                                id="searchQueryString"
-                                name="searchQueryString"
-                                placeholder="Enter keywords..."
-                                style={{ marginRight: "15px" }}
-                                onChange={this.handleFieldChange} />
-                            <Button variant="outlined" color="primary" onClick={this.handleOffersSearch}>
-                                Search
-                                {this.state.searchInProgress === true &&
-                                <CircularProgress style={{ marginLeft: "10px" }} size={15} />
-                                }
-                            </Button>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12} style={{ marginTop: "30px" }}>
-                        <Grid container justifyContent="center">
-                            {this.props.offerFetchError === true || this.state.error === true &&
-                                <Grid item xs={12}>
+            <div>
+                {this.state.profileInfo.length !== 0 ?
+                    (
+                        <Profile item={this.props.item}
+                                 userInfo={this.state.profileInfo}
+                                 userId={this.props.userId} />
+                    ) :
+                    (
+                        <div id="offersContainer">
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <Grid container justifyContent="center" style={{ marginBottom: "10px" }}>
+                                        <Typography variant="subtitle1">Your location: {this.props.userCity}, {this.props.userMunicipality}</Typography>
+                                    </Grid>
                                     <Grid container justifyContent="center">
-                                        <Typography variant="subtitle1" color="secondary">
-                                            <Error color="secondary" />&nbsp;
-                                            Error fetching offers: The ShareSpace server is down.
-                                        </Typography>
+                                        <Link to="/createOffer" style={{ textDecoration: "none", color: "white" }}>
+                                            <Button color="primary" variant="contained">
+                                                Create offer
+                                            </Button>
+                                        </Link>
                                     </Grid>
                                 </Grid>
-                            }
-                            {this.props.offers.length === 0 ?
-                                (
-                                    <Grid item xs={12}>
-                                        <Grid container justifyContent="center">
-                                            <Typography variant="subtitle1" style={{ color: "orange", fontSize: "25px", marginTop: "100px" }}>
-                                                <Info style={{ color: "orange", fontSize: "30px" }}/>&nbsp;
-                                                No offers are available for you at the moment.
+                                <Grid item xs={6}>
+                                    <Grid container justifyContent="center">
+                                        <Box mr={4}>
+                                            <Button variant="contained" style={{ backgroundColor: "green", color: "white" }} onClick={this.handleDialogOpen}>
+                                                Apply filters
+                                            </Button><br />
+                                            {this.state.filterInProgress === true &&
+                                            <CircularProgress style={{ marginLeft: "60px", marginTop: "15px" }} size={25} />
+                                            }
+                                            <FiltersCustomDialog dialogOpen={this.state.dialogOpen}
+                                                                 handleDialogOpen={this.handleDialogOpen}
+                                                                 handleDialogClose={this.handleDialogClose}
+                                                                 appliedFiltersHandler={this.handleAppliedFilters} />
+                                        </Box>
+                                        <Box>
+                                            <Typography variant="subtitle1">Active filters:</Typography>
+                                            {this.state.filters.myLocation === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("myLocation")} style={{ marginRight: "5px" }}>
+                                                    <Clear style={{ fontSize: "15px" }}/>
+                                                </IconButton>
+                                                My Location
                                             </Typography>
-                                        </Grid>
+                                            }
+                                            {this.state.filters.myOffers === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("myOffers")} style={{ marginRight: "5px" }}>
+                                                    <Clear style={{ fontSize: "15px" }}/>
+                                                </IconButton>
+                                                My offers
+                                            </Typography>
+                                            }
+                                            {this.state.filters.passengerOffers === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("passengerOffers")}>
+                                                    <Clear style={{ fontSize: "15px" }} />
+                                                </IconButton>
+                                                Passenger offers
+                                            </Typography>
+                                            }
+                                            {this.state.filters.driverOffers === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("driverOffers")}>
+                                                    <Clear style={{ fontSize: "15px" }} />
+                                                </IconButton>
+                                                Driver offers
+                                            </Typography>
+                                            }
+                                            {this.state.filters.createdToday === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("createdToday")}>
+                                                    <Clear style={{ fontSize: "15px" }} />
+                                                </IconButton>
+                                                Created today
+                                            </Typography>
+                                            }
+                                            {this.state.filters.createdYesterday === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("createdYesterday")}>
+                                                    <Clear style={{ fontSize: "15px" }} />
+                                                </IconButton>
+                                                Created yesterday
+                                            </Typography>
+                                            }
+                                            {this.state.filters.personLimitOneFive === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("personLimitOneFive")}>
+                                                    <Clear style={{ fontSize: "15px" }} />
+                                                </IconButton>
+                                                Person limit (1-5)
+                                            </Typography>
+                                            }
+                                            {this.state.filters.personLimitSixTen === true &&
+                                            <Typography variant="subtitle2">
+                                                <IconButton onClick={() => this.handleFilterClear("personLimitSixTen")}>
+                                                    <Clear style={{ fontSize: "15px" }} />
+                                                </IconButton>
+                                                Person limit (6-10)
+                                            </Typography>
+                                            }
+                                        </Box>
                                     </Grid>
-                                ) :
-                                (
-                                    <TableContainer style={{ width: "95%" }}>
-                                        <Table aria-label="a dense table">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Publisher</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Offer type</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Date and time</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Person limit</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Rendezvous points</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Destination</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Vehicle</TableCell>
-                                                    <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>People</TableCell>
-                                                    <TableCell> </TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {offers}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                )}
-                        </Grid>
-                    </Grid>
-                    {this.props.offers.length !== 0 &&
-                    <Grid item xs={12} style={{ marginTop: "50px" }}>
-                        <Grid container justifyContent="center">
-                            <IconButton onClick={this.handlePreviousPageClick} disabled={this.state.page === 0}>
-                                <ArrowBackIos style={{ fontSize: "11px" }} />
-                            </IconButton>
-                            <Pagination page={this.state.page + 1} count={pageCount} color="primary" onChange={this.handlePageChange} hidePrevButton hideNextButton />
-                            <IconButton onClick={this.handleNextPageClick} disabled={this.state.page === pageCount - 1}>
-                                <ArrowForwardIos style={{ fontSize: "11px" }} />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
-                    }
-                </Grid>
+                                </Grid>
+                                <hr style={{ width: "80%", color: "gray", marginTop: "20px", marginBottom: "30px" }}/>
+                                <Grid item xs={3}>
+                                    <Grid container justifyContent="center">
+                                        <Box>
+                                            <Typography variant="subtitle1">Sort by:</Typography>
+                                            <Grid container>
+                                                <Select
+                                                    id="sortCriteria"
+                                                    name="sortCriteria"
+                                                    value={this.state.sortCriteria}
+                                                    onChange={this.handleSortCriteriaChange}
+                                                    style={{ width: "150px" }}
+                                                >
+                                                    {this.state.sortOptions.map((sortOption) => {
+                                                        return (
+                                                            <MenuItem value={sortOption.value}>{sortOption.name}</MenuItem>
+                                                        );
+                                                    })}
+                                                </Select>
+                                                <Box ml={1}>
+                                                    <Tooltip title="Ascending">
+                                                        <IconButton onClick={this.handleOffersAscendingSort}>
+                                                            <ArrowUpward style={{ fontSize: "18px" }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Descending">
+                                                        <IconButton onClick={this.handleOffersDescendingSort}>
+                                                            <ArrowDownward style={{ fontSize: "18px" }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    {this.state.sortInProgress === true &&
+                                                    <CircularProgress size={22} style={{ marginLeft: "5px" }} />
+                                                    }
+                                                </Box>
+                                            </Grid>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Grid container justifyContent="flex-end">
+                                        <TextField
+                                            id="searchQueryString"
+                                            name="searchQueryString"
+                                            placeholder="Enter keywords..."
+                                            style={{ marginRight: "15px" }}
+                                            onChange={this.handleFieldChange} />
+                                        <Button variant="outlined" color="primary" onClick={this.handleOffersSearch}>
+                                            Search
+                                            {this.state.searchInProgress === true &&
+                                            <CircularProgress style={{ marginLeft: "10px" }} size={15} />
+                                            }
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12} style={{ marginTop: "30px" }}>
+                                    <Grid container justifyContent="center">
+                                        {this.props.offerFetchError === true || this.state.error === true &&
+                                        <Grid item xs={12}>
+                                            <Grid container justifyContent="center">
+                                                <Typography variant="subtitle1" color="secondary">
+                                                    <Error color="secondary" />&nbsp;
+                                                    Error fetching offers: The ShareSpace server is down.
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                        }
+                                        {this.props.offers.length === 0 ?
+                                            (
+                                                <Grid item xs={12}>
+                                                    <Grid container justifyContent="center">
+                                                        <Typography variant="subtitle1" style={{ color: "orange", fontSize: "25px", marginTop: "100px" }}>
+                                                            <Info style={{ color: "orange", fontSize: "30px" }}/>&nbsp;
+                                                            No offers are available for you at the moment.
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            ) :
+                                            (
+                                                <TableContainer style={{ width: "95%" }}>
+                                                    <Table aria-label="a dense table">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Publisher</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Offer type</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Date and time</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Person limit</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Rendezvous points</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Destination</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>Vehicle</TableCell>
+                                                                <TableCell style={{ fontWeight: "bold", fontSize: "18px" }}>People</TableCell>
+                                                                <TableCell> </TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {offers}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                            )}
+                                    </Grid>
+                                </Grid>
+                                {this.props.offers.length !== 0 &&
+                                <Grid item xs={12} style={{ marginTop: "50px" }}>
+                                    <Grid container justifyContent="center">
+                                        <IconButton onClick={this.handlePreviousPageClick} disabled={this.state.page === 0}>
+                                            <ArrowBackIos style={{ fontSize: "11px" }} />
+                                        </IconButton>
+                                        <Pagination page={this.state.page + 1} count={pageCount} color="primary" onChange={this.handlePageChange} hidePrevButton hideNextButton />
+                                        <IconButton onClick={this.handleNextPageClick} disabled={this.state.page === pageCount - 1}>
+                                            <ArrowForwardIos style={{ fontSize: "11px" }} />
+                                        </IconButton>
+                                    </Grid>
+                                </Grid>
+                                }
+                            </Grid>
+                        </div>
+                    )
+                }
             </div>
         )
     }
@@ -533,7 +553,11 @@ class Offers extends Component {
     getOffersPage = (offset, nextPageOffset) => {
         return this.props.offers.map((offer, index) => {
             return (
-                <Offer offer={offer} onOfferExpire={this.props.onOfferExpire} userId={this.props.userId} />
+                <Offer
+                    offer={offer}
+                    onOfferExpire={this.props.onOfferExpire}
+                    onServerError={this.props.onServerError}
+                    onProfileView={this.handleProfileView} />
             );
         }).filter((product, index) => (index >= offset && index < nextPageOffset));
     }

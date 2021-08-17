@@ -28,6 +28,13 @@ const ShareSpaceService = {
             }
         });
     },
+    fetchCurrentUserById: (token, id) => {
+        return AxiosShareSpace.get(`/api/users/find-id/${id}`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+    },
     updateCurrentUser: (token, id, firstName, lastName, city, municipality, phoneNumber, bio, facebookLink, twitterLink, instagramLink, type, vehicleModel) => {
         return AxiosShareSpace.post(`/api/users/update/${id}`, {
             "firstName": firstName,
