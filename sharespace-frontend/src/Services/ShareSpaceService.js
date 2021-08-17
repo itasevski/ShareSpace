@@ -93,6 +93,25 @@ const ShareSpaceService = {
             }
         });
     },
+    fetchFilteredOffers: (token, myLocation, city, municipality, myOffers, userId, passengerOffers, driverOffers, createdToday, createdYesterday, personLimitOneFive, personLimitSixTen) => {
+        return AxiosShareSpace.post("/api/offers/filtered", {
+            "myLocation": myLocation,
+            "city": city,
+            "municipality": municipality,
+            "myOffers": myOffers,
+            "userId": userId,
+            "passengerOffers": passengerOffers,
+            "driverOffers": driverOffers,
+            "createdToday": createdToday,
+            "createdYesterday": createdYesterday,
+            "personLimitOneFive": personLimitOneFive,
+            "personLimitSixTen": personLimitSixTen
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
+    },
     createOffer: (token, id, type, transportationVehicle, startDate, city, municipality, personLimit, destination, rendezvousPoints) => {
         return AxiosShareSpace.post("/api/offers/create", {
             "type": type,

@@ -159,8 +159,9 @@ class App extends Component {
                                                 offerFetchError={this.state.offerFetchError}
                                                 onServerError={this.logout}
                                                 onOfferExpire={this.loadOffers}
-                                                onOffersSort={this.offersSort}
-                                                onOffersSearch={this.offersSearch} />
+                                                onOffersSort={this.setOffersData}
+                                                onOffersSearch={this.setOffersData}
+                                                onOffersFilter={this.setOffersData} />
                                     ) :
                                     (
                                         <Redirect to={"/login"} />
@@ -248,14 +249,14 @@ class App extends Component {
                     });
 
             this.loadOffers();
+            // this.loadGeolocationData();
         }
         else {
             this.setState({
                 loadingScreen: false
             });
+            // this.loadGeolocationData();
         }
-
-        // this.loadGeolocationData();
     }
 
     // REPOSITORY FETCH FUNCTIONS
@@ -268,13 +269,18 @@ class App extends Component {
     //                     geolocationData: data.data,
     //                     userMunicipality: data.data.results[0].address_components[2].long_name,
     //                     userCity: data.data.results[0].address_components[3].long_name
-    //                 });
+    //                 },
+    //                     this.loadOffers);
     //             });
     //     });
     // }
 
     loadOffers = () => {
-        ShareSpaceService.fetchOffers(localStorage.getItem("userJwtToken"))
+        ShareSpaceService.fetchFilteredOffers(
+            localStorage.getItem("userJwtToken"),
+            true, "Skopje" , "Centar",
+            false, "", false, false, false, false, false, false
+            )
             .then(
                 (data) => {
                     this.setState({
@@ -316,13 +322,7 @@ class App extends Component {
         });
     }
 
-    offersSort = (data) => {
-        this.setState({
-            offers: data
-        });
-    }
-
-    offersSearch = (data) => {
+    setOffersData = (data) => {
         this.setState({
             offers: data
         });

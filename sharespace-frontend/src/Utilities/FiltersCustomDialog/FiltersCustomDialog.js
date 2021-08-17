@@ -19,6 +19,7 @@ import Typography from "@material-ui/core/Typography";
 const FiltersCustomDialog = (props) => {
     const [state, setState] = React.useState({
         myLocation: true,
+        myOffers: false,
         passengerOffers: false,
         driverOffers: false,
         createdToday: false,
@@ -69,6 +70,18 @@ const FiltersCustomDialog = (props) => {
             aria-describedby="alert-dialog-slide-description"
         >
             <DialogTitle id="alert-dialog-slide-title">Select filters</DialogTitle>
+            {state.selectionError === true &&
+                <Grid container>
+                    <Grid item xs={12}>
+                        <Grid container justifyContent="center">
+                            <Typography variant="subtitle1" color="secondary">
+                                <Error color="secondary" />&nbsp;
+                                Please select only one filter per row
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            }
             <DialogContent>
                 <FormLabel component="legend">Available filters:</FormLabel>
                 <FormHelperText>You can only select one per row</FormHelperText>
@@ -79,6 +92,13 @@ const FiltersCustomDialog = (props) => {
                                 <FormControlLabel
                                     control={<Checkbox color="primary" checked={state.myLocation} onChange={handleFilterChange} name="myLocation" />}
                                     label="My location"
+                                />
+                            </Grid>
+                            <hr className="horizontalRule" />
+                            <Grid container>
+                                <FormControlLabel
+                                    control={<Checkbox color="primary" checked={state.myOffers} onChange={handleFilterChange} name="myOffers" />}
+                                    label="My offers"
                                 />
                             </Grid>
                             <hr className="horizontalRule" />
@@ -99,15 +119,9 @@ const FiltersCustomDialog = (props) => {
                                 />
                                 <hr className="horizontalRule" />
                             </Grid>
-                            {state.selectionError === true &&
-                            <Typography variant="subtitle1" color="secondary" style={{ width: "400px" }}>
-                                <Error color="secondary" />&nbsp;
-                                Please select only one filter per row
-                            </Typography>
-                            }
                         </Grid>
                         <Grid item xs={6}>
-                            <Box style={{ height: "25%" }}>
+                            <Box style={{ height: "40%" }}>
                                 <Grid container>
                                 </Grid>
                             </Box>

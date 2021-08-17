@@ -17,4 +17,14 @@ public interface OfferRepository extends JpaRepository<Offer, String> {
 
     List<Offer> findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCase(String creatorName, String city, String municipality, String startDate, String rendezvousPoint, String destination);
 
+    List<Offer> findByCityAndMunicipality(String city, String municipality);
+
+    List<Offer> findByCreatorId(String creatorId);
+
+    List<Offer> findByOfferType(OfferType offerType);
+
+    List<Offer> findByPublishedAtContaining(String publishedAt);
+
+    List<Offer> findByPersonLimitBetween(int rangeStart, int rangeEnd);
+
 }

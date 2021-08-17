@@ -23,6 +23,7 @@ class Offers extends Component {
             dialogOpen: false,
             filters: {
                 myLocation: true,
+                myOffers: false,
                 passengerOffers: false,
                 driverOffers: false,
                 createdToday: false,
@@ -54,10 +55,11 @@ class Offers extends Component {
             error: false,
 
             page: 0,
-            size: 2,
+            size: 5,
 
             sortInProgress: false,
-            searchInProgress: false
+            searchInProgress: false,
+            filterInProgress: false
         }
     }
 
@@ -77,7 +79,8 @@ class Offers extends Component {
     handleAppliedFilters = (appliedFilters) => {
         this.setState({
             filters: appliedFilters
-        });
+        },
+            this.filterOffers);
     }
 
     handleSortCriteriaChange = (event) => {
@@ -119,13 +122,13 @@ class Offers extends Component {
     handleOffersAscendingSort = () => {
         const sortCriteria = this.state.sortCriteria;
 
-        this.sortOffers(sortCriteria, "true");
+        this.sortOffers(sortCriteria, true);
     }
 
     handleOffersDescendingSort = () => {
         const sortCriteria = this.state.sortCriteria;
 
-        this.sortOffers(sortCriteria, "false");
+        this.sortOffers(sortCriteria, false);
     }
 
     handleOffersSearch = () => {
@@ -194,6 +197,51 @@ class Offers extends Component {
         });
     }
 
+    filterOffers = () => {
+        const myLocation = this.state.filters.myLocation;
+        const city = this.props.userCity;
+        const municipality = this.props.userMunicipality;
+
+        const myOffers = this.state.filters.myOffers;
+        const userId = this.props.userId;
+
+        const passengerOffers = this.state.filters.passengerOffers;
+        const driverOffers = this.state.filters.driverOffers;
+        const createdToday = this.state.filters.createdToday;
+        const createdYesterday = this.state.filters.createdYesterday;
+        const personLimitOneFive = this.state.filters.personLimitOneFive;
+        const personLimitSixTen = this.state.filters.personLimitSixTen;
+
+        ShareSpaceService.fetchFilteredOffers(
+            localStorage.getItem("userJwtToken"),
+            myLocation, city, municipality, myOffers, userId, passengerOffers, driverOffers, createdToday, createdYesterday, personLimitOneFive, personLimitSixTen
+        ).then(
+            (data) => {
+                this.setState({
+                    error: false,
+                    filterInProgress: false
+                });
+                this.props.onOffersFilter(data.data);
+            },
+            (err) => {
+                if(err.response.status === 403) {
+                    this.props.onServerError();
+                }
+                else {
+                    this.setState({
+                        error: true,
+                        filterInProgress: false
+                    });
+                    this.props.onOffersFilter([]);
+                }
+            });
+
+        this.setState({
+            filterInProgress: true
+        });
+    }
+
+
     render() {
         const offset = this.state.page * this.state.size;
         const nextPageOffset = offset + this.state.size;
@@ -221,7 +269,10 @@ class Offers extends Component {
                             <Box mr={4}>
                                 <Button variant="contained" style={{ backgroundColor: "green", color: "white" }} onClick={this.handleDialogOpen}>
                                     Apply filters
-                                </Button>
+                                </Button><br />
+                                {this.state.filterInProgress === true &&
+                                <CircularProgress style={{ marginLeft: "60px", marginTop: "15px" }} size={25} />
+                                }
                                 <FiltersCustomDialog dialogOpen={this.state.dialogOpen}
                                                      handleDialogOpen={this.handleDialogOpen}
                                                      handleDialogClose={this.handleDialogClose}
@@ -235,6 +286,14 @@ class Offers extends Component {
                                         <Clear style={{ fontSize: "15px" }}/>
                                     </IconButton>
                                     My Location
+                                </Typography>
+                                }
+                                {this.state.filters.myOffers === true &&
+                                <Typography variant="subtitle2">
+                                    <IconButton onClick={() => this.handleFilterClear("myOffers")} style={{ marginRight: "5px" }}>
+                                        <Clear style={{ fontSize: "15px" }}/>
+                                    </IconButton>
+                                    My offers
                                 </Typography>
                                 }
                                 {this.state.filters.passengerOffers === true &&
@@ -414,43 +473,57 @@ class Offers extends Component {
                 filters.myLocation = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
+                return;
+            case "myOffers":
+                filters.myOffers = false;
+                this.setState({
+                    filters: filters
+                },
+                    this.filterOffers);
                 return;
             case "passengerOffers":
                 filters.passengerOffers = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
                 return;
             case "driverOffers":
                 filters.driverOffers = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
                 return;
             case "createdToday":
                 filters.createdToday = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
                 return;
             case "createdYesterday":
                 filters.createdYesterday = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
                 return;
             case "personLimitOneFive":
                 filters.personLimitOneFive = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
                 return;
             case "personLimitSixTen":
                 filters.personLimitSixTen = false;
                 this.setState({
                     filters: filters
-                });
+                },
+                    this.filterOffers);
                 return;
             default:
                 return;

@@ -1,6 +1,7 @@
 package mk.ukim.finki.sharespace.service;
 
 import mk.ukim.finki.sharespace.model.Offer;
+import mk.ukim.finki.sharespace.model.dto.FilterDto;
 import mk.ukim.finki.sharespace.model.dto.OfferDto;
 import mk.ukim.finki.sharespace.model.dto.SortDto;
 
@@ -14,6 +15,8 @@ public interface OfferService {
     List<Offer> getBySortCriteria(SortDto sortDto);
 
     List<Offer> getByQueryString(String queryString);
+
+    List<Offer> getByFilterCriteria(FilterDto filterDto);
 
     Optional<Offer> create(OfferDto offerDto);
 

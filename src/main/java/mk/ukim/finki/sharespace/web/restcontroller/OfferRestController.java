@@ -2,6 +2,7 @@ package mk.ukim.finki.sharespace.web.restcontroller;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.Offer;
+import mk.ukim.finki.sharespace.model.dto.FilterDto;
 import mk.ukim.finki.sharespace.model.dto.OfferDto;
 import mk.ukim.finki.sharespace.model.dto.SortDto;
 import mk.ukim.finki.sharespace.service.OfferService;
@@ -29,6 +30,11 @@ public class OfferRestController {
     @PostMapping("/sorted")
     public List<Offer> getSorted(@RequestBody SortDto sortDto) {
         return this.offerService.getBySortCriteria(sortDto);
+    }
+
+    @PostMapping("/filtered")
+    public List<Offer> getFiltered(@RequestBody FilterDto filterDto) {
+        return this.offerService.getByFilterCriteria(filterDto);
     }
 
     @PostMapping("/create")

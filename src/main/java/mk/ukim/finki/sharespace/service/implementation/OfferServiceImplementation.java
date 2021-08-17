@@ -1,8 +1,10 @@
 package mk.ukim.finki.sharespace.service.implementation;
 
 import lombok.AllArgsConstructor;
+import mk.ukim.finki.sharespace.ShareSpaceApplication;
 import mk.ukim.finki.sharespace.model.Offer;
 import mk.ukim.finki.sharespace.model.abstraction.User;
+import mk.ukim.finki.sharespace.model.dto.FilterDto;
 import mk.ukim.finki.sharespace.model.dto.OfferDto;
 import mk.ukim.finki.sharespace.model.dto.SortDto;
 import mk.ukim.finki.sharespace.model.enumeration.OfferType;
@@ -13,6 +15,8 @@ import mk.ukim.finki.sharespace.service.OfferService;
 import mk.ukim.finki.sharespace.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -79,6 +83,98 @@ public class OfferServiceImplementation implements OfferService {
 
         return this.offerRepository.findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCase
                 (queryString, queryString, queryString, queryString, queryString, queryString);
+    }
+
+    @Override
+    public List<Offer> getByFilterCriteria(FilterDto filterDto) {
+        List<Offer> list = new ArrayList<>();
+
+        if(!filterDto.isMyLocation() && !filterDto.isMyOffers() && !filterDto.isPassengerOffers() && !filterDto.isDriverOffers() &&
+        !filterDto.isCreatedToday() && !filterDto.isCreatedYesterday() && !filterDto.isPersonLimitOneFive() && !filterDto.isPersonLimitSixTen()) {
+            list = getAll();
+            return list;
+        }
+
+        if(filterDto.isMyLocation()) {
+            list = this.offerRepository.findByCityAndMunicipality(filterDto.getCity(), filterDto.getMunicipality());
+        }
+
+        if(filterDto.isMyOffers()) {
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByCreatorId(filterDto.getUserId());
+            }
+            else {
+                list = list.stream().filter(offer -> offer.getCreator().getId().equals(filterDto.getUserId()))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        if(filterDto.isPassengerOffers()) {
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByOfferType(OfferType.PASSENGER_OFFER);
+            }
+            else {
+                list = list.stream().filter(offer -> offer.getOfferType() == OfferType.PASSENGER_OFFER)
+                        .collect(Collectors.toList());
+            }
+        }
+        else if(filterDto.isDriverOffers()) {
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByOfferType(OfferType.DRIVER_OFFER);
+            }
+            else {
+                list = list.stream().filter(offer -> offer.getOfferType() == OfferType.DRIVER_OFFER)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        if(filterDto.isCreatedToday()) {
+            LocalDateTime now = LocalDateTime.now();
+            String todayDate = now.format(ShareSpaceApplication.formatter);
+            todayDate = todayDate.split(" ")[0];
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByPublishedAtContaining(todayDate);
+            }
+            else {
+                String todayDateCopy = todayDate;
+                list = list.stream().filter(offer -> offer.getPublishedAt().split(" ")[0].equals(todayDateCopy))
+                        .collect(Collectors.toList());
+            }
+        }
+        else if(filterDto.isCreatedYesterday()) {
+            LocalDateTime yesterday = LocalDateTime.now().minusHours(24);
+            String yesterdayDate = yesterday.format(ShareSpaceApplication.formatter);
+            yesterdayDate = yesterdayDate.split(" ")[0];
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByPublishedAtContaining(yesterdayDate);
+            }
+            else {
+                String yesterdayDateCopy = yesterdayDate;
+                list = list.stream().filter(offer -> offer.getPublishedAt().split(" ")[0].equals(yesterdayDateCopy))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        if(filterDto.isPersonLimitOneFive()) {
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByPersonLimitBetween(1, 5);
+            }
+            else {
+                list = list.stream().filter(offer -> offer.getPersonLimit() >= 1 && offer.getPersonLimit() <= 5)
+                        .collect(Collectors.toList());
+            }
+        }
+        else if(filterDto.isPersonLimitSixTen()) {
+            if(list.isEmpty()) {
+                list = this.offerRepository.findByPersonLimitBetween(6, 10);
+            }
+            else {
+                list = list.stream().filter(offer -> offer.getPersonLimit() >= 6 && offer.getPersonLimit() <= 10)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return list;
     }
 
     @Override

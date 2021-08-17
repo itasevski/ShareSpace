@@ -16,7 +16,8 @@ const About = () => {
                     <Grid container justifyContent="center">
                         <Typography variant="body1" gutterBottom style={{ marginTop: "25px", fontSize: "25px", textAlign: "center", width: "50%" }}>
                             ShareSpace is a system where people can share expenses when using public transport. Its purpose is to help people save money,
-                            time and make new friendships. Your journeys begin with us!
+                            time and make new friendships. Your journeys begin with us!<br />
+                            <span style={{ fontSize: "18px", color: "gray" }}>This is the BETA version of the ShareSpace system. Some of the functionalities/features may not be available yet, but will be in the final product.</span>
                         </Typography>
                     </Grid>
                 </Grid>

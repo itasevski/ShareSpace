@@ -143,7 +143,7 @@ const ProfileEditForm = (props) => {
                         <Grid container>
                             <Grid item xs={6}>
                                 <Grid container justifyContent="center" className="profileEditInfo">
-                                    <Button variant="outlined" color="primary" component="label">
+                                    <Button variant="outlined" color="primary" component="label" disabled>
                                         Change profile picture
                                         <input
                                             type="file"
