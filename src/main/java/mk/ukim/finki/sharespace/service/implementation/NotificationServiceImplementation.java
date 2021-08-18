@@ -10,6 +10,8 @@ import mk.ukim.finki.sharespace.service.NotificationService;
 import mk.ukim.finki.sharespace.service.UserService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,6 +37,13 @@ public class NotificationServiceImplementation implements NotificationService {
     }
 
     @Override
+    public List<Notification> findByRecipientId(String recipientId) {
+        User user = this.userService.findById(recipientId);
+
+        return this.notificationRepository.findByRecipient(user);
+    }
+
+    @Override
     public Optional<Notification> update(String id, NotificationDto notificationDto) {
         Notification notification = findById(id);
         User user = this.userService.findById(notificationDto.getRecipientId());
@@ -50,6 +59,14 @@ public class NotificationServiceImplementation implements NotificationService {
     public void delete(String id) {
         if(this.notificationRepository.existsById(id)) this.notificationRepository.deleteById(id);
         else throw new NotificationNotFoundException("Notification with id " + id + " doesn't exist");
+    }
+
+    @Override
+    @Transactional
+    public void deleteByRecipientId(String recipientId) {
+        User user = this.userService.findById(recipientId);
+
+        this.notificationRepository.deleteByRecipient(user);
     }
 
 }

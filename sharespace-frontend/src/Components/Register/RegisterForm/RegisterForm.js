@@ -69,9 +69,7 @@ const RegisterForm = (props) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
-        const phoneNumber =
-            (state.phoneNumber === "+" || state.phoneNumber === state.countryCode || state.phoneNumber === null || state.phoneNumber === "") === true ?
-                null : state.phoneNumber;
+        const phoneNumber = state.phoneNumber;
 
         if(!validatePhoneNumber(phoneNumber)) {
             console.error("Invalid phone number");
@@ -225,6 +223,7 @@ const RegisterForm = (props) => {
                                 onChange={handleFieldChange}
                             />
                         </Grid>
+                        <span style={{ color: "#3f51b5", fontSize: "12px", marginLeft: "10px" }}>It is recommended that you don't change these two fields (city and municipality) and leave them pre-filled by our geolocation services.</span>
                         <Grid item xs={12}>
                             <TextField
                                 type="email"
@@ -242,6 +241,7 @@ const RegisterForm = (props) => {
                             <MuiPhoneNumber
                                 variant="outlined"
                                 fullWidth
+                                required
                                 id="phoneNumber"
                                 label="Phone number"
                                 name="phoneNumber"
@@ -342,11 +342,7 @@ const RegisterForm = (props) => {
     }
 
     function validatePhoneNumber(phoneNumber) {
-        var isPhoneNumberValid = true;
-
-        if(phoneNumber !== null) {
-            isPhoneNumberValid = (phoneNumber.length >= 8 && phoneNumber.length <= 16);
-        }
+        var isPhoneNumberValid = (phoneNumber.length >= 8 && phoneNumber.length <= 16);
 
         setState({
             ...state,

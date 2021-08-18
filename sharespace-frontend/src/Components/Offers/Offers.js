@@ -61,6 +61,7 @@ class Offers extends Component {
             sortInProgress: false,
             searchInProgress: false,
             filterInProgress: false,
+            joinInProgress: false,
 
             profileInfo: []
         }
@@ -250,6 +251,37 @@ class Offers extends Component {
         });
     }
 
+    offerJoin = (offerId) => {
+        ShareSpaceService.joinOffer(
+            localStorage.getItem("userJwtToken"),
+            offerId, this.props.userId
+        ).then(
+            (data) => {
+                var filters = {...this.state.filters};
+                filters.myLocation = true;
+                this.setState({
+                    error: false,
+                    joinInProgress: false,
+                    filters: filters
+                },
+                    this.props.onOfferJoin);
+            },
+            (err) => {
+                if(err.response.status === 403) {
+                    this.props.onServerError();
+                }
+                else {
+                    this.setState({
+                        error: true,
+                        joinInProgress: false
+                    });
+                }
+            });
+
+        this.setState({
+            joinInProgress: true
+        });
+    }
 
     render() {
         const offset = this.state.page * this.state.size;
@@ -466,7 +498,7 @@ class Offers extends Component {
                                     </Grid>
                                 </Grid>
                                 {this.props.offers.length !== 0 &&
-                                <Grid item xs={12} style={{ marginTop: "50px" }}>
+                                <Grid item xs={12} style={{ marginTop: "50px", marginBottom: "50px" }}>
                                     <Grid container justifyContent="center">
                                         <IconButton onClick={this.handlePreviousPageClick} disabled={this.state.page === 0}>
                                             <ArrowBackIos style={{ fontSize: "11px" }} />
@@ -555,9 +587,12 @@ class Offers extends Component {
             return (
                 <Offer
                     offer={offer}
+                    joinInProgress={this.state.joinInProgress}
+                    userId={this.props.userId}
                     onOfferExpire={this.props.onOfferExpire}
                     onServerError={this.props.onServerError}
-                    onProfileView={this.handleProfileView} />
+                    onProfileView={this.handleProfileView}
+                    onOfferJoin={this.offerJoin} />
             );
         }).filter((product, index) => (index >= offset && index < nextPageOffset));
     }

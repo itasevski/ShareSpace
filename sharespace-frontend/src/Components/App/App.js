@@ -86,6 +86,7 @@ class App extends Component {
             userInfo: {},
             userCity: "",
             userMunicipality: "",
+            userNotifications: [],
 
             // MISCELLANEOUS VARIABLES
             loadingScreen: true
@@ -101,7 +102,11 @@ class App extends Component {
                     ) :
                     (
                         <Router>
-                            <Header username={this.state.userInfo.username} onLogout={this.logout} />
+                            <Header username={this.state.userInfo.username}
+                                    userId={this.state.userInfo.id}
+                                    userNotifications={this.state.userNotifications}
+                                    onNotificationsClear={this.loadCurrentUserNotifications}
+                                    onLogout={this.logout} />
 
                             <Route path={"/home"} exact render={() => (
                                 localStorage.getItem("successfulRegistration") || localStorage.getItem("successfulPasswordChange") !== null ?
@@ -162,6 +167,7 @@ class App extends Component {
                                                 onOffersSort={this.setOffersData}
                                                 onOffersSearch={this.setOffersData}
                                                 onOffersFilter={this.setOffersData}
+                                                onOfferJoin={this.loadOffers}
                                                 item={this.state.profileItems[0]} />
                                     ) :
                                     (
@@ -238,63 +244,83 @@ class App extends Component {
                 .then(
                     (data) => {
                         this.setState({
-                            userInfo: data.data,
-                            loadingScreen: false
+                            userInfo: data.data
                         });
                     },
                     (err) => {
                         localStorage.removeItem("userJwtToken");
                         this.setState({
-                            userInfo: {},
-                            loadingScreen: false
+                            userInfo: {}
                         });
                     });
+        }
 
-            this.loadOffers();
-            // this.loadGeolocationData();
-        }
-        else {
-            this.setState({
-                loadingScreen: false
-            });
-            // this.loadGeolocationData();
-        }
+        this.loadGeolocationData();
     }
 
     // REPOSITORY FETCH FUNCTIONS
 
-    // loadGeolocationData = () => {
-    //     navigator.geolocation.getCurrentPosition((position) => {
-    //         GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
-    //             .then((data) => {
-    //                 this.setState({
-    //                     geolocationData: data.data,
-    //                     userMunicipality: data.data.results[0].address_components[2].long_name,
-    //                     userCity: data.data.results[0].address_components[3].long_name
-    //                 },
-    //                     this.loadOffers);
-    //             });
-    //     });
-    // }
+    loadGeolocationData = () => {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                GeocodeService.fetchGeolocationData(position.coords.latitude, position.coords.longitude)
+                    .then(
+                        (data) => {
+                            this.setState({
+                                geolocationData: data.data,
+                                userMunicipality: data.data.results[0].address_components[2].long_name,
+                                userCity: data.data.results[0].address_components[3].long_name
+                            },
+                                this.loadOffers);
+                        });
+            },
+            (err) => {
+                this.setState({
+                    loadingScreen: false
+                });
+            });
+    }
 
     loadOffers = () => {
         ShareSpaceService.fetchFilteredOffers(
             localStorage.getItem("userJwtToken"),
-            true, "Skopje" , "Centar",
+            true, this.state.userCity, this.state.userMunicipality,
             false, "", false, false, false, false, false, false
             )
             .then(
                 (data) => {
                     this.setState({
-                        offers: data.data
-                    });
+                        offers: data.data,
+                    },
+                        this.loadCurrentUserNotifications);
                 },
                 (err) => {
                     this.setState({
                         offerFetchError: true,
-                        offers: []
+                        offers: [],
+                        loadingScreen: false
                     });
                 });
+    }
+
+    loadCurrentUserNotifications = () => {
+        ShareSpaceService.fetchCurrentUserNotifications(
+            localStorage.getItem("userJwtToken"),
+            this.state.userInfo.id
+        ).then(
+            (data) => {
+                this.setState({
+                    userNotifications: data.data,
+                    loadingScreen: false
+                });
+            },
+            (err) => {
+                this.setState({
+                    userNotifications: [],
+                    loadingScreen: false
+                });
+            }
+        )
     }
 
     login = () => {
@@ -304,10 +330,9 @@ class App extends Component {
             .then((data) => {
                 this.setState({
                     userInfo: data.data
-                });
+                },
+                    this.loadOffers);
             });
-
-        this.loadOffers();
     }
 
     logout = () => {

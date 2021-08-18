@@ -45,7 +45,7 @@ const ProfileEditForm = (props) => {
             city: props.userInfo.city,
             municipality: props.userInfo.municipality,
             vehicleModel: props.userInfo.vehicleModel,
-            phoneNumber: props.userInfo.phoneNumber,
+            phoneNumber: props.userInfo.phoneNumber === null ? "" : props.userInfo.phoneNumber,
             bio: props.userInfo.bio,
             facebookLink: props.userInfo.facebookLink,
             twitterLink: props.userInfo.twitterLink,
@@ -72,9 +72,7 @@ const ProfileEditForm = (props) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
-        const phoneNumber =
-            (state.phoneNumber === "+" || state.phoneNumber === state.countryCode || state.phoneNumber === null) === true ?
-                null : state.phoneNumber;
+        const phoneNumber = state.phoneNumber;
 
         if(validatePhoneNumber(phoneNumber)) {
             console.error("Invalid phone number.");
@@ -328,11 +326,7 @@ const ProfileEditForm = (props) => {
     )
 
     function validatePhoneNumber(phoneNumber) {
-        var error = false;
-
-        if(phoneNumber !== null) {
-            error = !(phoneNumber.length >= 8 && phoneNumber.length <= 16);
-        }
+        var error = !(phoneNumber.length >= 8 && phoneNumber.length <= 16);
 
         setState({
             ...state,

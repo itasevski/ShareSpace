@@ -28,8 +28,29 @@ const ShareSpaceService = {
             }
         });
     },
+    fetchUserByUsername: (token, username) => {
+        return AxiosShareSpace.get(`/api/users/find-username/${username}`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+    },
     fetchCurrentUserById: (token, id) => {
         return AxiosShareSpace.get(`/api/users/find-id/${id}`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+    },
+    fetchCurrentUserNotifications: (token, id) => {
+        return AxiosShareSpace.get(`/api/notifications/find-recipientid/${id}`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+    },
+    deleteCurrentUserNotifications: (token, id) => {
+        return AxiosShareSpace.get(`/api/notifications/delete/${id}`, {
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -130,6 +151,16 @@ const ShareSpaceService = {
             "userId": id,
             "destination": destination,
             "rendezvousPoints": rendezvousPoints
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            }
+        });
+    },
+    joinOffer: (token, offerId, userId) => {
+        return AxiosShareSpace.post("/api/offers/join", {
+            "offerId": offerId,
+            "userId": userId
         }, {
             headers: {
                 Authorization: 'Bearer ' + token,

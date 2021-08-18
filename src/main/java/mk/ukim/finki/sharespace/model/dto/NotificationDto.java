@@ -10,4 +10,10 @@ public class NotificationDto {
     private String description;
     private String recipientId;
 
+    public NotificationDto(NotificationType notificationType, String description, String recipientId) {
+        this.type = notificationType;
+        this.description = description;
+        this.recipientId = recipientId;
+    }
+
 }

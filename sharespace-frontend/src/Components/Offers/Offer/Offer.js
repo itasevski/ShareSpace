@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Button, Grid, TableCell, TableRow} from "@material-ui/core";
+import {Button, CircularProgress, Grid, TableCell, TableRow} from "@material-ui/core";
 import {VerifiedUserRounded} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import {formatDistance, isBefore} from "date-fns";
@@ -46,10 +46,14 @@ const Offer = (props) => {
                 });
     }
 
+    const handleJoinClick = () => {
+        props.onOfferJoin(props.offer.id);
+    }
+
     var now = new Date();
     var expirationDate = new Date(reformatDate(props.offer.expirationDate));
 
-    var result;
+    var distance;
 
     if(isBefore(expirationDate, now)) {
         deleteOffer(props.offer.id);
@@ -58,7 +62,7 @@ const Offer = (props) => {
         );
     }
     else {
-        result = formatDistance(expirationDate, now, {
+        distance = formatDistance(expirationDate, now, {
             addSuffix: true
         });
     }
@@ -128,21 +132,42 @@ const Offer = (props) => {
             </TableCell>
             <TableCell align="right">
                 {props.offer.creator.id !== props.userId ?
-                    props.offer.participants.length === props.offer.personLimit ?
+                    canUserJoin() ?
+                        props.offer.participants.length === props.offer.personLimit ?
+                            (
+                                <Button variant="contained" disabled>FULL</Button>
+                            ) :
+                            (
+                                <Button variant="contained"
+                                        style={{ backgroundColor: "green", color: "white" }}
+                                        onClick={handleJoinClick} >
+                                    JOIN
+                                    {props.joinInProgress === true &&
+                                    <CircularProgress style={{ marginLeft: "10px", color: "white" }} size={15} />
+                                    }
+                                </Button>
+                            ) :
                         (
-                            <Button variant="contained" disabled>FULL</Button>
-                        ) :
-                        (
-                            <Button variant="contained" style={{ backgroundColor: "green", color: "white" }}>JOIN</Button>
+                            <Button variant="contained" disabled>JOINED</Button>
                         ) :
                     (
                         <span></span>
                     )
                 }
-                <Typography variant="subtitle2">Expires: {result}</Typography>
+                <Typography variant="subtitle2">Expires: {distance}</Typography>
             </TableCell>
         </TableRow>
     );
+
+    function canUserJoin() {
+        for(var i = 0; i<props.offer.participants.length; i++) {
+            if(props.offer.participants[i].id === props.userId) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 }
 

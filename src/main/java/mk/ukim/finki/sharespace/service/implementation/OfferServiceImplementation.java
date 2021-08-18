@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.ShareSpaceApplication;
 import mk.ukim.finki.sharespace.model.Offer;
 import mk.ukim.finki.sharespace.model.abstraction.User;
-import mk.ukim.finki.sharespace.model.dto.FilterDto;
-import mk.ukim.finki.sharespace.model.dto.OfferDto;
-import mk.ukim.finki.sharespace.model.dto.SortDto;
+import mk.ukim.finki.sharespace.model.dto.*;
 import mk.ukim.finki.sharespace.model.enumeration.OfferType;
 import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
+import mk.ukim.finki.sharespace.model.event.OfferCreatedEvent;
+import mk.ukim.finki.sharespace.model.event.OfferJoinEvent;
 import mk.ukim.finki.sharespace.model.exception.OfferNotFoundException;
 import mk.ukim.finki.sharespace.repository.OfferRepository;
 import mk.ukim.finki.sharespace.service.OfferService;
 import mk.ukim.finki.sharespace.service.UserService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class OfferServiceImplementation implements OfferService {
 
     private final OfferRepository offerRepository;
     private final UserService userService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public List<Offer> getAll() {
@@ -178,6 +180,18 @@ public class OfferServiceImplementation implements OfferService {
     }
 
     @Override
+    public void offerJoin(OfferJoinDto offerJoinDto) {
+        User user = this.userService.findById(offerJoinDto.getUserId());
+        Offer offer = findById(offerJoinDto.getOfferId());
+
+        offer.getParticipants().add(user);
+
+        this.offerRepository.save(offer);
+
+        this.applicationEventPublisher.publishEvent(new OfferJoinEvent(offer, user.getId()));
+    }
+
+    @Override
     public Optional<Offer> create(OfferDto offerDto) {
         User user = this.userService.findById(offerDto.getUserId());
 
@@ -187,6 +201,8 @@ public class OfferServiceImplementation implements OfferService {
                         user, offerDto.getDestination(), offerDto.getRendezvousPoints());
 
         offer.getParticipants().add(user);
+
+        this.applicationEventPublisher.publishEvent(new OfferCreatedEvent(offer));
 
         return Optional.of(this.offerRepository.save(offer));
     }

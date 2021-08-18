@@ -7,6 +7,8 @@ import mk.ukim.finki.sharespace.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/notifications")
@@ -21,10 +23,15 @@ public class NotificationRestController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/find-id/{id}")
     public ResponseEntity<Notification> findById(@PathVariable String id) {
         Notification notification = this.notificationService.findById(id);
         return ResponseEntity.ok(notification);
+    }
+
+    @GetMapping("/find-recipientid/{id}")
+    public List<Notification> findByRecipientId(@PathVariable String id) {
+        return this.notificationService.findByRecipientId(id);
     }
 
     @PutMapping("/update/{id}")
@@ -34,10 +41,10 @@ public class NotificationRestController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
-        this.notificationService.delete(id);
-        return ResponseEntity.ok("Successfully deleted notification with id " + id);
+    @GetMapping("/delete/{id}")
+    public ResponseEntity<String> deleteByRecipientId(@PathVariable String id) {
+        this.notificationService.deleteByRecipientId(id);
+        return ResponseEntity.ok("Successfully deleted notification.");
     }
 
 }

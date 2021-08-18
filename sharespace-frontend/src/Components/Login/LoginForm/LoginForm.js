@@ -6,8 +6,6 @@ import {CircularProgress, Typography} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Container from "@material-ui/core/Container";
 import StyleTwo from "../../../Utilities/Styles/SecurityFormStyles/StyleTwo";
 import {CheckCircle, Error} from "@material-ui/icons";
@@ -150,11 +148,11 @@ const LoginForm = (props) => {
                             Sign In
                         </Button>
                         <Grid container>
-                            <Grid item xs>
-                                <Link to="#" variant="body2" style={{ color: "#3f51b5" }}>
-                                    Forgot password?
-                                </Link>
-                            </Grid>
+                            {/*<Grid item xs>*/}
+                            {/*    <Link to="#" variant="body2" style={{ color: "#3f51b5" }}>*/}
+                            {/*        Forgot password?*/}
+                            {/*    </Link>*/}
+                            {/*</Grid>*/}
                             <Grid item>
                                 <Link to="/register" variant="body2" style={{ color: "#3f51b5" }}>
                                     Don't have an account? Sign Up

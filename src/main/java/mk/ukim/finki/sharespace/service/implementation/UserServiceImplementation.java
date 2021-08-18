@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,6 +58,11 @@ public class UserServiceImplementation implements UserService {
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username " + username + " doesn't exist."));
+    }
+
+    @Override
+    public List<User> findByCityAndMunicipality(String city, String municipality) {
+        return this.userRepository.findByCityAndMunicipality(city, municipality);
     }
 
     @Override

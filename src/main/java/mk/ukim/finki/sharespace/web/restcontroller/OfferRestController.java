@@ -2,9 +2,7 @@ package mk.ukim.finki.sharespace.web.restcontroller;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.Offer;
-import mk.ukim.finki.sharespace.model.dto.FilterDto;
-import mk.ukim.finki.sharespace.model.dto.OfferDto;
-import mk.ukim.finki.sharespace.model.dto.SortDto;
+import mk.ukim.finki.sharespace.model.dto.*;
 import mk.ukim.finki.sharespace.service.OfferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +33,13 @@ public class OfferRestController {
     @PostMapping("/filtered")
     public List<Offer> getFiltered(@RequestBody FilterDto filterDto) {
         return this.offerService.getByFilterCriteria(filterDto);
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<String> offerJoin(@RequestBody OfferJoinDto offerJoinDto) {
+        this.offerService.offerJoin(offerJoinDto);
+
+        return ResponseEntity.ok("User successfully joined offer.");
     }
 
     @PostMapping("/create")
