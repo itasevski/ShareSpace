@@ -1,5 +1,5 @@
 import React from "react";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@material-ui/core";
+import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 

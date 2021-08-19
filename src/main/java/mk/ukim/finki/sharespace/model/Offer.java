@@ -10,10 +10,7 @@ import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -69,7 +66,7 @@ public class Offer extends BaseEntity {
             name = "sharespace_offer_participants",
             joinColumns = @JoinColumn(name = "offer_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> participants = new ArrayList<>();
+    private Set<User> participants = new HashSet<>();
 
     private String destination;
 

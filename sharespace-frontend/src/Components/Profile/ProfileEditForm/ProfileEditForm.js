@@ -12,7 +12,6 @@ import {Link, useHistory} from "react-router-dom";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
 import {CircularProgress} from "@material-ui/core";
 
-
 const ProfileEditForm = (props) => {
     const history = useHistory();
 

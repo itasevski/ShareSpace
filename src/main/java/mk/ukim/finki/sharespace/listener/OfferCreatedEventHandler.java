@@ -1,7 +1,6 @@
 package mk.ukim.finki.sharespace.listener;
 
 import lombok.AllArgsConstructor;
-import mk.ukim.finki.sharespace.model.Notification;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.dto.NotificationDto;
 import mk.ukim.finki.sharespace.model.enumeration.NotificationType;

@@ -1,10 +1,9 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Button, CircularProgress, Grid, TableCell, TableRow} from "@material-ui/core";
 import {VerifiedUserRounded} from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import {formatDistance, isBefore} from "date-fns";
 import ShareSpaceService from "../../../Services/ShareSpaceService";
-import Profile from "../../Profile/Profile";
 
 const Offer = (props) => {
 

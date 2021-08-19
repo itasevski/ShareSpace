@@ -56,7 +56,7 @@ const Home = (props) => {
                                 </Link>
                             </div>
                             <div className="homeAction">
-                                <Link className="homeActionLink covidLink" to="#">
+                                <Link className="homeActionLink covidLink" to="/covidRegulations">
                                     <LocalHospital style={{ fontSize: "200px" }} />
                                     <Grid container justifyContent="center">
                                         <Typography variant="h6">

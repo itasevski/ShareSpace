@@ -16,12 +16,8 @@ import mk.ukim.finki.sharespace.service.UserService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +31,11 @@ public class OfferServiceImplementation implements OfferService {
     @Override
     public List<Offer> getAll() {
         return this.offerRepository.findAll();
+    }
+
+    @Override
+    public Set<Offer> getAllCustom() {
+        return this.offerRepository.findAllCustom();
     }
 
     @Override
@@ -66,7 +67,7 @@ public class OfferServiceImplementation implements OfferService {
     }
 
     @Override
-    public List<Offer> getByQueryString(String queryString) {
+    public Set<Offer> getByQueryString(String queryString) {
         try {
             int queryInteger = Integer.parseInt(queryString);
             return this.offerRepository.findByPersonLimitOrStartDateContaining(queryInteger, queryString);
@@ -77,10 +78,10 @@ public class OfferServiceImplementation implements OfferService {
 
         if(queryString.equalsIgnoreCase("taxi") || queryString.equalsIgnoreCase("bus") ||
                 queryString.equalsIgnoreCase("ferry") || queryString.equalsIgnoreCase("subway")) {
-            ArrayList<Offer> list = (ArrayList<Offer>) this.offerRepository.findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCaseOrTransportVehicle
+            HashSet<Offer> set = (HashSet<Offer>) this.offerRepository.findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCaseOrTransportVehicle
                     (queryString, queryString, queryString, queryString, queryString, queryString, TransportVehicle.valueOf(queryString.toUpperCase()));
-            System.out.println(list.size());
-            return list;
+            System.out.println(set.size());
+            return set;
         }
 
         return this.offerRepository.findByCreatorFullNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrMunicipalityContainingIgnoreCaseOrStartDateContainingOrRendezvousPointsIgnoreCaseOrDestinationContainingIgnoreCase
@@ -211,24 +212,6 @@ public class OfferServiceImplementation implements OfferService {
     public Offer findById(String id) {
         return this.offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFoundException("Offer with id " + id + " doesn't exist."));
-    }
-
-    @Override
-    public Optional<Offer> update(String id, OfferDto offerDto) {
-        Offer offer = findById(id);
-        User user = this.userService.findById(offerDto.getUserId());
-
-        offer.setOfferType(offerDto.getType());
-        offer.setTransportVehicle(offerDto.getTransportationVehicle());
-        offer.setStartDate(offerDto.getStartDate());
-        offer.setCity(offerDto.getCity());
-        offer.setMunicipality(offerDto.getMunicipality());
-        offer.setPersonLimit(offerDto.getPersonLimit());
-        offer.setCreator(user);
-        offer.setDestination(offerDto.getDestination());
-        offer.setRendezvousPoints(offerDto.getRendezvousPoints());
-
-        return Optional.of(this.offerRepository.save(offer));
     }
 
     @Override

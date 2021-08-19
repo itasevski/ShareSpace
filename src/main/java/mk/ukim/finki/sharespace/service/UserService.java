@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
 
-    Optional<User> create(UserDto userDto);
-
     User findById(String id);
 
     User findByUsername(String username);
@@ -21,7 +19,5 @@ public interface UserService extends UserDetailsService {
     Optional<User> update(String id, UserDto userDto);
 
     Optional<User> changePassword(String id, PasswordChangeDto passwordChangeDto);
-
-    void delete(String id);
 
 }

@@ -10,13 +10,7 @@ public interface NotificationService {
 
     Optional<Notification> create(NotificationDto notificationDto);
 
-    Notification findById(String id);
-
     List<Notification> findByRecipientId(String recipientId);
-
-    Optional<Notification> update(String id, NotificationDto notificationDto);
-
-    void delete(String id);
 
     void deleteByRecipientId(String recipientId);
 

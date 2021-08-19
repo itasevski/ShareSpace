@@ -17,6 +17,7 @@ import GeocodeService from "../../Services/GeocodeService";
 import ShareSpaceService from "../../Services/ShareSpaceService";
 import jwt_decode from "jwt-decode";
 import {CircularProgress} from "@material-ui/core";
+import CovidRegulations from "../CovidRegulations/CovidRegulations";
 
 class App extends Component {
 
@@ -225,6 +226,8 @@ class App extends Component {
                                         <Redirect to={"/login"} />
                                     )
                             )} />
+
+                            <Route path={"/covidRegulations"} exact render={() => <CovidRegulations /> } />
 
                             <Route path={"/"} exact render={() => <Redirect to={"/home"} /> }/>
 

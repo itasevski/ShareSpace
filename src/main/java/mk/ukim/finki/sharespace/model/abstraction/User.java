@@ -2,7 +2,6 @@ package mk.ukim.finki.sharespace.model.abstraction;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import mk.ukim.finki.sharespace.model.Offer;
 import mk.ukim.finki.sharespace.model.enumeration.Role;
 import mk.ukim.finki.sharespace.model.enumeration.Type;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Data
 @Entity

@@ -2,11 +2,9 @@ package mk.ukim.finki.sharespace.service.implementation;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.sharespace.model.Driver;
-import mk.ukim.finki.sharespace.model.Passenger;
 import mk.ukim.finki.sharespace.model.abstraction.User;
 import mk.ukim.finki.sharespace.model.dto.PasswordChangeDto;
 import mk.ukim.finki.sharespace.model.dto.UserDto;
-import mk.ukim.finki.sharespace.model.enumeration.Role;
 import mk.ukim.finki.sharespace.model.enumeration.Type;
 import mk.ukim.finki.sharespace.model.exception.PasswordsDoNotMatchException;
 import mk.ukim.finki.sharespace.model.exception.UserNotFoundException;
@@ -31,21 +29,6 @@ public class UserServiceImplementation implements UserService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         return this.userRepository.findByUsername(s)
                 .orElseThrow(() -> new UserNotFoundException("User with username " + s + " doesn't exist."));
-    }
-
-    @Override
-    public Optional<User> create(UserDto userDto) {
-        User user = null;
-        if(userDto.getType() == Type.DRIVER) {
-            user = new Driver(userDto.getVehicleModel(), Role.ROLE_USER, Type.DRIVER, "testusername", "testpass", userDto.getFirstName(), userDto.getLastName(),
-                    userDto.getCity(), userDto.getMunicipality(), userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
-        }
-        else {
-            user = new Passenger(Role.ROLE_USER, Type.PASSENGER, "testusername", "testpass", userDto.getFirstName(), userDto.getLastName(),
-                    userDto.getCity(), userDto.getMunicipality(), userDto.getPhoneNumber(), "testemail", userDto.getFacebookLink(), userDto.getTwitterLink(), userDto.getInstagramLink(), userDto.getBio());
-        }
-
-        return Optional.of(this.userRepository.save(user));
     }
 
     @Override
@@ -99,12 +82,6 @@ public class UserServiceImplementation implements UserService {
         user.setPassword(this.passwordEncoder.encode(passwordChangeDto.getNewPassword()));
 
         return Optional.of(this.userRepository.save(user));
-    }
-
-    @Override
-    public void delete(String id) {
-        if(this.userRepository.existsById(id)) this.userRepository.deleteById(id);
-        else throw new UserNotFoundException("User with id " + id + " doesn't exist.");
     }
 
 }

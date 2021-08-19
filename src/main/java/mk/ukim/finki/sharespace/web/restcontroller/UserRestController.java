@@ -16,13 +16,6 @@ public class UserRestController {
 
     private final UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<User> create(@RequestBody UserDto userDto) {
-        return this.userService.create(userDto)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
     @GetMapping("/find-id/{id}")
     public ResponseEntity<User> findById(@PathVariable String id) {
         User user = this.userService.findById(id);
@@ -47,12 +40,6 @@ public class UserRestController {
         return this.userService.changePassword(id, passwordChangeDto)
                 .map(user -> ResponseEntity.ok().body(user))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
-        this.userService.delete(id);
-        return ResponseEntity.ok("Successfully deleted user with id " + id);
     }
 
 }

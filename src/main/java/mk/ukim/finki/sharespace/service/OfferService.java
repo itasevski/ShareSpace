@@ -5,14 +5,17 @@ import mk.ukim.finki.sharespace.model.dto.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface OfferService {
 
     List<Offer> getAll();
 
+    Set<Offer> getAllCustom();
+
     List<Offer> getBySortCriteria(SortDto sortDto);
 
-    List<Offer> getByQueryString(String queryString);
+    Set<Offer> getByQueryString(String queryString);
 
     List<Offer> getByFilterCriteria(FilterDto filterDto);
 
@@ -21,8 +24,6 @@ public interface OfferService {
     Optional<Offer> create(OfferDto offerDto);
 
     Offer findById(String id);
-
-    Optional<Offer> update(String id, OfferDto offerDto);
 
     void delete(String id);
 

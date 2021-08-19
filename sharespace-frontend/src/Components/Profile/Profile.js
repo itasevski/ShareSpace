@@ -12,7 +12,7 @@ import {
 import "./Profile.css";
 import ProgressCircle from "../../Utilities/CircularProgress/ProgressCircle/ProgressCircle";
 import Button from "@material-ui/core/Button";
-import {Link, Redirect} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 function stars(number) {
     const items = [];

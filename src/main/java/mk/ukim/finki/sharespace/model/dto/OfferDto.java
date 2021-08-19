@@ -4,7 +4,6 @@ import lombok.Data;
 import mk.ukim.finki.sharespace.model.enumeration.OfferType;
 import mk.ukim.finki.sharespace.model.enumeration.TransportVehicle;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
